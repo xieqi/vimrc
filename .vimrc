@@ -10,6 +10,25 @@ function! MySys()
     endif
 endfunction
 
+" Encoding related
+set encoding=utf-8
+set fileencoding=utf8
+set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
+"source $VIMRUNTIME/delmenu.vim
+"source $VIMRUNTIME/menu.vim
+"set langmenu=zh_CN.UTF-8
+set langmenu=en_US.UTF-8
+"language messages zh_CN.UTF-8
+language messages en_US.UTF-8
+set ambiwidth=double
+
+" [platform specific options]
+if MySys() == "windows"
+	set termencoding=cp936
+elseif MySys() == "linux"
+    set termencoding=utf-8
+endif
+
 " Setting up Vundle for linux
 if MySys() == "linux"
 	let vundle_installed=1
@@ -81,38 +100,12 @@ Bundle 'YankRing.vim'
 Bundle 'FencView.vim'
 
 " Installing plugins the first time
-if vundle_installed == 0
-    echo "Installing Bundles, please ignore key map error messages"
-    echo ""
-    :BundleInstall
-endif
-
-" Platform
-function! MySys()
-    if has("win32")
-        return "windows"
-    else
-        return "linux"
-    endif
-endfunction
-
-" Encoding related
-set encoding=utf-8
-set fileencoding=utf8
-set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
-"source $VIMRUNTIME/delmenu.vim
-"source $VIMRUNTIME/menu.vim
-"set langmenu=zh_CN.UTF-8
-set langmenu=en_US.UTF-8
-"language messages zh_CN.UTF-8
-language messages en_US.UTF-8
-set ambiwidth=double
-
-" [platform specific options]
-if MySys() == "windows"
-	set termencoding=cp936
-elseif MySys() == "linux"
-    set termencoding=utf-8
+if MySys() == "linux"
+	if vundle_installed == 0
+		echo "Installing Bundles, please ignore key map error messages"
+		echo ""
+		:BundleInstall
+	endif
 endif
 
 filetype plugin indent on

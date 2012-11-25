@@ -22,8 +22,6 @@
     call git clone https://github.com/xieqi/vimrc.git "%BASE_DIR%"
 )
 
-@if not exist "%BASE_DIR%\.vim\bundle" call mkdir "%BASE_DIR%\.vim\bundle"
-call xcopy /s/e/h/y/r/q/i "%BASE_DIR%\.vim" "%HOME%\.vim"
 call copy "%BASE_DIR%\.vimrc" "%HOME%\.vimrc"
 call copy "%BASE_DIR%\.vimrc" "%HOME%\_vimrc"
 
