@@ -97,8 +97,8 @@ set nowrap
 set scrolloff=3 "when scrolling, keep cursor 3 lines away from screen border
 if has("gui_running")
     set guioptions+=b
-    set guioptions-=m
-    set guioptions-=T
+    "set guioptions-=m
+    "set guioptions-=T
     "colorscheme wombat
     "set guifont=Inconsolata\ Medium\ 18
     set background=light
@@ -180,8 +180,11 @@ set cinoptions=:0g0t0(susj1
 
 " Encoding related
 set encoding=utf-8
-set langmenu=zh_CN.UTF-8
-language message zh_CN.UTF-8
+set termencoding=utf-8
+source $VIMRUNTIME/delmenu.vim
+source $VIMRUNTIME/menu.vim
+"set langmenu=zh_CN.UTF-8
+language messages zh_CN.UTF-8
 set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
 set ambiwidth=double
 
