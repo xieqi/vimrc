@@ -1,15 +1,26 @@
 " General
 set nocompatible
 
-" Setting up Vundle
-let vundle_installed=1
-let vundle_readme=expand('~/.vim/bundle/vundle/README.md')
-if !filereadable(vundle_readme)
-    echo "Installing Vundle..."
-    echo ""
-    silent !mkdir -p ~/.vim/bundle
-    silent !git clone https://github.com/gmarik/vundle ~/.vim/bundle/vundle
-    let vundle_installed=0
+" Platform
+function! MySys()
+    if has("win32")
+        return "windows"
+    else
+        return "linux"
+    endif
+endfunction
+
+" Setting up Vundle for linux
+if MySys() == "linux"
+	let vundle_installed=1
+	let vundle_readme=expand('~/.vim/bundle/vundle/README.md')
+	if !filereadable(vundle_readme)
+		echo "Installing Vundle..."
+		echo ""
+		silent !mkdir -p ~/.vim/bundle
+		silent !git clone https://github.com/gmarik/vundle ~/.vim/bundle/vundle
+		let vundle_installed=0
+	endif
 endif
 
 " Use Vundle to manage plugin
