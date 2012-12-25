@@ -14,12 +14,11 @@ if MySys() == "windows"
     set runtimepath=$HOME/.vim,$VIM/vimfiles,$VIMRUNTIME,$VIM/vimfiles/after,$HOME/.vim/after
     " one mac and windows, use * register for copy-paste
     set clipboard=unnamed
-    "autocmd bufwritepost .vimrc source ~/_vimrc
-    "autocmd bufwritepost _vimrc source ~/_vimrc
+    autocmd! bufwritepost _vimrc source %
 else
     " on Linux use + register for copy-paste
     set clipboard=unnamedplus
-    "autocmd bufwritepost .vimrc source ~/.vimrc
+    autocmd! bufwritepost .vimrc source %
 endif
 
 " Encoding related
@@ -32,13 +31,9 @@ if MySys() == "windows"
 else
     set termencoding=utf-8
 endif
-"source $VIMRUNTIME/delmenu.vim
-"source $VIMRUNTIME/menu.vim
-"set langmenu=zh_CN.UTF-8
 set langmenu=en_US.UTF-8
-"language messages zh_CN.UTF-8
 language messages en_US.UTF-8
-set ambiwidth=double
+set ambiwidth=single
 
 " Setting up Vundle for linux
 if MySys() == "linux"
@@ -63,47 +58,65 @@ Bundle 'gmarik/vundle'
 
 " General
 Bundle 'scrooloose/nerdtree'
-Bundle 'altercation/vim-colors-solarized'
 Bundle 'tpope/vim-surround'
+Bundle 'tpope/vim-repeat'
 Bundle 'Townk/vim-autoclose'
 Bundle 'kien/ctrlp.vim'
-Bundle 'vim-scripts/sessionman.vim'
+"Bundle 'xolox/vim-session'
+Bundle 'sessionman.vim'
 Bundle 'matchit.zip'
-"Bundle 'Lokaltog/vim-powerline'
+Bundle 'IndexedSearch'
+"Bundle 'SearchComplete'
 Bundle 'Lokaltog/vim-easymotion'
-" Switch between companion source files
-Bundle 'derekwyatt/vim-fswitch'
-" Git  integration
-Bundle 'motemen/git-vim'
-" Tab list panel
-Bundle 'kien/tabman.vim'
-" Terminal Vim with 256 colors colorscheme
-Bundle 'fisadev/fisa-vim-colorscheme'
-Bundle 'manuscript'
+"Bundle 'kien/tabman.vim'
+Bundle 'kien/rainbow_parentheses.vim'
+" Input Method
+Bundle 'VimIM'
+" Colorscheme
+Bundle 'altercation/vim-colors-solarized'
 Bundle 'Wombat'
-" Indent text object
-Bundle 'michaeljsmith/vim-indent-object'
+Bundle 'tomasr/molokai'
+Bundle 'manuscript'
+if (has("python") || has("python3")) 
+    Bundle 'Lokaltog/powerline', {'rtp':'powerline/bindings/vim'}
+else
+    Bundle 'Lokaltog/vim-powerline'
+endif
+Bundle 'nathanaelkane/vim-indent-guides'
+"Bundle 'Yggdroot/indentLine'
+"Bundle 'michaeljsmith/vim-indent-object'
 Bundle 'bufexplorer.zip'
 Bundle 'fholgado/minibufexpl.vim'
-Bundle 'mbbill/undotree'
+"Bundle 'mbbill/undotree'
+Bundle 'YankRing.vim'
+Bundle 'FencView.vim'
 
 " General Programming
-Bundle 'scrooloose/syntastic'
-Bundle 'tpope/vim-fugitive'
+"Bundle 'scrooloose/syntastic'
+"Bundle 'tpope/vim-fugitive'
 Bundle 'scrooloose/nerdcommenter'
 Bundle 'majutsushi/tagbar'
+"Bundle 'mileszs/ack.vim'
+"Bundle 'grep.vim'
+"Bundle 'EasyGrep'
+Bundle 'derekwyatt/vim-fswitch'
+"Bundle 'motemen/git-vim'
+Bundle 'godlygeek/tabular'
 
 " Snippets & AutoComplete
 Bundle 'Shougo/neocomplcache'
 Bundle 'Shougo/neosnippet'
-Bundle 'honza/snipmate-snippets'
-Bundle 'OmniCppComplete'
+"Bundle 'honza/snipmate-snippets'
+"Bundle 'OmniCppComplete'
 "Bundle 'AutoComplPop'
 "Bundle 'ervandew/supertab'
 
-" Yank history navigation
-Bundle 'YankRing.vim'
-Bundle 'FencView.vim'
+" Python
+"Bundle 'klen/python-mode'
+"Bundle 'pyflakes.vim'
+"Bundle 'fisadev/vim-debug.vim'
+
+Bundle 'pangloss/vim-javascript'
 
 " Installing plugins the first time
 if MySys() == "linux"
@@ -118,31 +131,32 @@ filetype plugin indent on
 
 " Key map settings
 let mapleader = " "
-let maplocalleader = '_'
+let maplocalleader = "-"
 
 " Display related
 set number
 set showmatch
-set showmode
+set noshowmode
 set showcmd
 set ruler
+set shortmess=atI
+"set cursorcolumn
+set cursorline
+"set colorcolumn=+1
 if has('statusline')
     set laststatus=2
-    "let g:Powerline_symbols = 'fancy'
-    set statusline=
+    let g:Powerline_symbols = "fancy"
+    "set statusline=
     "set statusline+=%1* "switch to User1 highlight
-    "set statusline+=%{getcwd()}\ > "current working dir
-    "set statusline+=%#ErrorMsg#
     "set statusline+=\ %F "relative path
-    set statusline+=%<%f\    " Filename
-    set statusline+=%w%h%m%r " Options
-    set statusline+=%= "split left and right
-    set statusline+=\ %{&ft}:%{&ff}:%{&fenc} "file encoding
-    set statusline+=\ U+%B "value of byte under cursor
+    "set statusline+=%<%f\    " Filename
+    "set statusline+=%w%h%m%r " Options
+    "set statusline+=%= "split left and right
+    "set statusline+=\ %{&ft}:%{&ff}:%{&fenc} "file encoding
+    "set statusline+=\ U+%B "value of byte under cursor
     "set statusline+=\ %-14.(%l,%c%V%)\ %p%% "line percentage in file
-    set statusline+=\ %(%l,%c%V%)\ %p%% "line percentage in file
-    set statusline+=%< "truncate
-    ""set statusline+=%{fugitive#statusline()} "  Git Hotness
+    "set statusline+=\ %(%l,%c%V%)\ %p%% "line percentage in file
+    "set statusline+=%< "truncate
 endif
 "set listchars=nbsp:·,tab:©¬,eol:¶,trail:§,extends:»,precedes:«
 set listchars=tab:>-,eol:¬,trail:$,extends:»,precedes:«
@@ -152,7 +166,7 @@ set nowrap
 " when scrolling, keep cursor 3 lines away from screen border
 set scrolloff=3
 " only show 15 tab
-set tabpagemax=15
+"set tabpagemax=15
 " allow for cursor beyond last character
 "set virtualedit=onemore
 " better unix / windows compatibility
@@ -160,85 +174,76 @@ set viewoptions=folds,options,cursor,unix,slash
 " abbrev. of messages (avoids 'hit enter')
 set shortmess+=filmnrxoOtT
 set splitbelow
+
+set background=dark
+
+"{{{ solarized colorscheme setting
 if filereadable(expand("~/.vim/bundle/vim-colors-solarized/colors/solarized.vim"))
     let g:solarized_termcolors=256
     let g:solarized_termtrans=1
     let g:solarized_contrast="high"
-    let g:solarized_visibility="high"
+    "let g:solarized_visibility="high"
 endif
+"}}}
 
-set background=dark
 if has("gui_running")
     set guioptions+=b
     set guioptions-=m
     set guioptions-=T
-    set guifont=Monaco:h14
-    "set guifont=Consolas:h14:cANSI
-    "set guifont=Bitstream_Vera_Sans_Mono:h14:cANSI
-    "set gfw=Yahei_Mono:h10.5:cGB2312
     colorscheme solarized
     if MySys() == "windows"
+        "set guifont=DejaVu_Sans_Mono_for_Powerline:h16 
+        set guifont=Inconsolata_for_Powerline:h18
         au GUIEnter * simalt ~x
+    else
+        au GUIEnter * set lines=999 columns=999
+        set guifont=Monaco\ for\ Powerline\ 16
     endif
 else
-    colorscheme wombat
     " use 256 colors when possible
     if &term =~? 'mlterm\|xterm\|screen-256'
         let &t_Co = 256
     endif
+    colorscheme molokai
 endif
 
-" Strip whitespace
-function! StripTrailingWhitespace()
-    " Preparation: save last search, and cursor position.
-    let _s=@/
-    let l = line(".")
-    let c = col(".")
-    " do the business:
-    %s/\s\+$//e
-    " clean up: restore previous search history, and cursor position
-    let @/=_s
-    call cursor(l, c)
-endfunction
-nmap <silent> <leader>trs :call StripTrailingWhitespace()<cr>:w<cr>
-
-"{{{ Toggle dark/light background for solarized
-nmap <leader>tb :call ToggleSolarized()<CR>
-function! ToggleSolarized()
-    if &background == 'dark'
-        set background=light
-        colorscheme solarized
-    elseif &background == 'light'
-        set background=dark
-        colorscheme solarized
-    endif
-endfunc
+"{{{ molokai colorscheme setting
+let g:molokai_original = 1
 "}}}
 
-"{{{ Toggle cursorcolumn highlight
-nnoremap <leader>tcc :call Toggle_Cursor_Column_Highlight()<CR>
-let s:cchlflag=0
-function! Toggle_Cursor_Column_Highlight()
-    if s:cchlflag == 0
-        set cursorcolumn
-        let s:cchlflag = 1
+let g:fullscreen = 0
+function! ToggleFullscreen()
+    if g:fullscreen == 1
+        let g:fullscreen = 0
+        let mod = "remove"
     else
-        set nocursorcolumn
-        let s:cchlflag = 0
+        let g:fullscreen = 1
+        let mod = "add"
     endif
+    call system("wmctrl -ir " . v:windowid . " -b " . mod . ",fullscreen")
+endfunction
+
+map <silent><F11> :call ToggleFullscreen()<CR>
+
+"{{{ Highlight Class and Function names
+function! s:HighlightFunctionsAndClasses()
+  syn match cCustomFunc "\w\+\s*\((\)\@="
+  syn match cCustomClass "\w\+\s*\(::\)\@="
+
+  hi def link cCustomFunc Function
+  hi def link cCustomClass Function
 endfunction
 "}}}
+au Syntax * call s:HighlightFunctionsAndClasses()
 
-function! Toggle_Line_Number()
-    if &nu
-        setl rnu
-    elseif &rnu
-        setl nornu
-    else
-        setl nu
-    endif
-endfunction
-nnoremap <silent> <leader>tln :call Toggle_Line_Number()<CR>
+" vim-indent-guides setting {
+"let g:indent_guides_enable_on_vim_startup = 1
+let g:indent_guides_guide_size = 1
+let g:indent_guides_start_level = 2
+let g:indent_guides_soft_pattern = ' '
+let g:indent_guides_exclude_filetypes = ['help', 'nerdtree']
+nmap <silent><leader>tig <Plug>IndentGuidesToggle
+" }
 
 " Fold Setting
 set foldenable
@@ -280,7 +285,7 @@ set mousehide
 set mousemodel=popup
 " allow buffer switching without saving
 set hidden
-
+set noswapfile
 " Tab related
 set tabstop=4
 set shiftwidth=4
@@ -289,10 +294,11 @@ set expandtab
 set smarttab
 " Tablength exceptions
 autocmd FileType html setlocal shiftwidth=2 tabstop=2
+autocmd FileType htmldjango setlocal shiftwidth=2 tabstop=2
 autocmd FileType javascript setlocal shiftwidth=2 tabstop=2
-map <silent> <leader>t2 :set tabstop=2 shiftwidth=2<cr>
-map <silent> <leader>t4 :set tabstop=4 shiftwidth=4<cr>
-map <silent> <leader>t8 :set tabstop=8 shiftwidth=8<cr>
+map <silent><leader>t2 :set tabstop=2 shiftwidth=2<CR>
+map <silent><leader>t4 :set tabstop=4 shiftwidth=4<CR>
+map <silent><leader>t8 :set tabstop=8 shiftwidth=8<CR>
 
 " Indent related
 set cindent
@@ -300,24 +306,36 @@ set autoindent
 set smartindent
 set cinoptions=:0g0t0(susj1
 
-" Temp folder used to store swap and undo files.
-let s:vimtmp = $HOME."/.vimtmp"
+function! InitializeDirectories()
+    let separator = "."
+    let parent = $HOME
+    let prefix = '.vim'
+    let dir_list = {
+                \ 'backup': 'backupdir',
+                \ 'views': 'viewdir',
+                \ 'swap': 'directory' }
 
-" [create temp dir if not exists]
-if getftype(s:vimtmp) != "dir"
-    if mkdir(s:vimtmp) == 0
-        echoerr "Can not create undo directory: ".s:vimtmp
+    if has('persistent_undo')
+        let dir_list['undo'] = 'undodir'
     endif
-endif
 
-" [presistent-undo]
-if has("persistent_undo")
-    let &undodir = s:vimtmp
-    set undofile
-endif
-
-" [swap folder]
-let &directory = s:vimtmp
+    for [dirname, settingname] in items(dir_list)
+        let directory = parent . '/' . prefix . '/' . dirname . "/"
+        if exists("*mkdir")
+            if !isdirectory(directory)
+                call mkdir(directory)
+            endif
+        endif
+        if !isdirectory(directory)
+            echo "Warning: Unable to create backup directory: " . directory
+            echo "Try: mkdir -p " . directory
+        else
+            let directory = substitute(directory, " ", "\\\\ ", "g")
+            exec "set " . settingname . "=" . directory
+        endif
+    endfor
+endfunction
+call InitializeDirectories()
 
 " search for exuberant ctags
 let ctagsbins = []
@@ -332,7 +350,14 @@ for ctags in ctagsbins
 endfor
 unlet ctagsbins
 
-" [Set up cscope and ctag  environment]
+set csprg=cscope
+"set cscopetagorder=1
+"set nocscopetag
+set cscopetagorder=0
+set cscopetag
+set cscopequickfix=c-,d-,e-,f-,g-,i-,s-,t-
+
+"{{{ Set up cscope and ctag  environment
 function! ToggleCscopeCtags()
     if g:ctagsbin == ''
         echomsg 'No ctags found!'
@@ -355,10 +380,6 @@ function! ToggleCscopeCtags()
             cclose
             return
         endif
-        set csprg=cscope
-        set cscopetagorder=1
-        set nocscopetag
-        set cscopequickfix=c-,d-,e-,f-,g-,i-,s-,t-
         set nocscopeverbose
         " add any database in current directory
         if filereadable("cscope.out")
@@ -376,52 +397,210 @@ function! ToggleCscopeCtags()
         set cscopeverbose
     endif
 endfunction
-nnoremap <silent><F4> :call ToggleCscopeCtags()<CR>
-"inoremap <silent><F4> <ESC>:call ToggleCscopeCtags()<CR>
+nnoremap <silent><C-F4> :call ToggleCscopeCtags()<CR>
+nnoremap <silent><leader>tcs :call ToggleCscopeCtags()<CR>
 
-" [Cscope hot keys]
-nnoremap <leader>fc :cs find c <c-r>=expand("<cword>")<cr><cr>
-nnoremap <leader>fd :cs find d <c-r>=expand("<cword>")<cr><cr>
-nnoremap <leader>fe :cs find e <c-r>=expand("<cword>")<cr><cr>
-nnoremap <leader>ff :cs find f <c-r>=expand("<cfile>")<cr><cr>
-nnoremap <leader>fg :cs find g <c-r>=expand("<cword>")<cr><cr>
-nnoremap <leader>fi :cs find i ^<c-r>=expand("<cfile>")<cr>$<cr>
-nnoremap <leader>fs :cs find s <c-r>=expand("<cword>")<cr><cr>
-nnoremap <leader>ft :cs find t <c-r>=expand("<cword>")<cr><cr>
+" Cscope hot keys
+" The following maps all invoke one of the following cscope search types:
+"
+"   's'   symbol: find all references to the token under cursor
+"   'g'   global: find global definition(s) of the token under cursor
+"   'c'   calls:  find all calls to the function name under cursor
+"   't'   text:   find all instances of the text under cursor
+"   'e'   egrep:  egrep search for the word under cursor
+"   'f'   file:   open the filename under cursor
+"   'i'   includes: find files that include the filename under cursor
+"   'd'   called: find functions that function under cursor calls
+nnoremap <silent><leader>fs :cs find s <C-R>=expand("<cword>")<CR><CR>
+nnoremap <silent><leader>fg :cs find g <C-R>=expand("<cword>")<CR><CR>
+nnoremap <silent><leader>fd :cs find d <C-R>=expand("<cword>")<CR><CR>
+nnoremap <silent><leader>fc :cs find c <C-R>=expand("<cword>")<CR><CR>
+nnoremap <silent><leader>ft :cs find t <C-R>=expand("<cword>")<CR><CR>
+nnoremap <silent><leader>fe :cs find e <C-R>=expand("<cword>")<CR><CR>
+nnoremap <silent><leader>ff :cs find f <C-R>=expand("<cfile>")<CR><CR>
+nnoremap <silent><leader>fi :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+nnoremap <leader>fu :cs find s 
 
-nnoremap <silent> <leader>sfc :scs find c <c-r>=expand("<cword>")<cr><cr>
-nnoremap <silent> <leader>sfd :scs find d <c-r>=expand("<cword>")<cr><cr>
-nnoremap <silent> <leader>sfe :scs find e <c-r>=expand("<cword>")<cr><cr>
-nnoremap <silent> <leader>sff :scs find f <c-r>=expand("<cfile>")<cr><cr>
-nnoremap <silent> <leader>sfg :scs find g <c-r>=expand("<cword>")<cr><cr>
-nnoremap <silent> <leader>sfi :scs find i ^<c-r>=expand("<cfile>")<cr>$<cr>
-nnoremap <silent> <leader>sfs :scs find s <c-r>=expand("<cword>")<cr><cr>
-nnoremap <silent> <leader>sft :scs find t <c-r>=expand("<cword>")<cr><cr>
+nnoremap <silent><leader>sfs :scs find s <C-R>=expand("<cword>")<CR><CR>
+nnoremap <silent><leader>sfg :scs find g <C-R>=expand("<cword>")<CR><CR>
+nnoremap <silent><leader>sfd :scs find d <C-R>=expand("<cword>")<CR><CR>
+nnoremap <silent><leader>sfc :scs find c <C-R>=expand("<cword>")<CR><CR>
+nnoremap <silent><leader>sft :scs find t <C-R>=expand("<cword>")<CR><CR>
+nnoremap <silent><leader>sfe :scs find e <C-R>=expand("<cword>")<CR><CR>
+nnoremap <silent><leader>sff :scs find f <C-R>=expand("<cfile>")<CR><CR>
+nnoremap <silent><leader>sfi :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+"}}}
 
-" C-]: Show list of matching tags when more than one tag matches <cword>.
+"{{{ Toggle darkStrip whitespace
+function! StripTrailingWhitespace()
+    " Preparation: save last search, and cursor position.
+    let _s=@/
+    let l = line(".")
+    let c = col(".")
+    " do the business:
+    %s/\s\+$//e
+    " clean up: restore previous search history, and cursor position
+    let @/=_s
+    call cursor(l, c)
+endfunction
+nmap <silent><leader>trs :call StripTrailingWhitespace()<CR>:w<CR>
+"}}}
+
+"Remove the Windows ^M
+noremap <leader>m mmHmt:%s/<C-V><CR>//ge<CR>'tzt'm
+
+"{{{ Toggle dark/light background for solarized
+function! ToggleSolarized()
+    if &background == 'dark'
+        set background=light
+        colorscheme solarized
+    elseif &background == 'light'
+        set background=dark
+        colorscheme solarized
+    endif
+endfunc
+nmap <silent><leader>tbg :call ToggleSolarized()<CR>
+"}}}
+
+"{{{ Toggle cursorcolumn highlight
+let s:cchlflag=0
+function! Toggle_Cursor_Column_Highlight()
+    if s:cchlflag == 0
+        set cursorcolumn
+        let s:cchlflag = 1
+    else
+        set nocursorcolumn
+        let s:cchlflag = 0
+    endif
+endfunction
+nmap <silent><leader>tcc :call Toggle_Cursor_Column_Highlight()<CR>
+"}}}
+
+"{{{ Toggle line number
+function! Toggle_Line_Number()
+    if &nu
+        setl rnu
+    elseif &rnu
+        setl nornu
+    else
+        setl nu
+    endif
+endfunction
+nmap <silent><leader>tln :call Toggle_Line_Number()<CR>
+"}}}
+
+nnoremap <silent><leader>tyr :YRShow<CR>
+let g:yankring_history_dir = expand('$HOME/.vim')
+let g:yankring_replace_n_pkey = '<m-p>'
+let g:yankring_replace_n_nkey = '<m-n>'
+
+"{{{ fswitch
+nnoremap <leader>fsh :FSHere<cr>
+nnoremap <leader>fsl :FSSplitLeft<cr>
+nnoremap <leader>fsr :FSSplitRight<cr>
+nnoremap <leader>fsb :FSSplitBelow<cr>
+nnoremap <leader>fsa :FSSplitAbove<cr>
+"}}}
+
+"{{{ Tabularize
+nmap <leader>a= :Tabularize /=<cr>
+vmap <leader>a= :Tabularize /=<cr>
+nmap <leader>a: :Tabularize /:\zs<cr>
+vmap <leader>a: :Tabularize /:\zs<cr>
+nmap <leader>a:: :Tabularize /:<cr>
+vmap <leader>a:: :Tabularize /:<cr>
+nmap <leader>a& :Tabularize /&<cr>
+vmap <leader>a& :Tabularize /&<cr>
+nmap <leader>a, :Tabularize /,<cr>
+vmap <leader>a, :Tabularize /,<cr>
+nmap <leader>a<Bar> :Tabularize /<Bar><cr>
+vmap <leader>a<Bar> :Tabularize /<Bar><cr>
+"}}}
+
+let g:EasyMotion_leader_key = '<leader><leader>'
+
+" Fast saving
+nmap <silent><leader>ww :w<CR>
+nmap <silent><leader>wf :w!<CR>
+
+" Fast quiting
+nmap <silent><leader>qw :wq<CR>
+nmap <silent><leader>qf :q!<CR>
+nmap <silent><leader>qq :q<CR>
+nmap <silent><leader>qa :qa<CR>
+
+" Fast remove highlight search
+nmap <silent><leader>/ :nohlsearch<CR>
+
+" show invisible chars
+nmap <silent><leader>tsl :set list!<CR>
+
+" Toggle paste mode
+nmap <silent><leader>tp :set invpaste<CR>:set paste?<CR>
+
+"Fast redraw
+nmap <silent><leader>rd :redraw!<CR>
+
+"Favorite filetypes
+set ffs=unix,dos
+
+nmap <silent><leader>ffd :se ff=dos<CR>
+nmap <silent><leader>ffu :se ff=unix<CR>
+
+" easier navigation between split window
+map <C-j> <C-w>j
+map <C-k> <C-w>k
+map <C-h> <C-w>h
+map <C-l> <C-w>l
+"imap <C-j> <ESC><C-w>j
+"imap <C-k> <ESC><C-w>k
+"imap <C-h> <ESC><C-w>h
+"imap <C-l> <ESC><C-w>l
+
+" [Switch tab pages]
+nnoremap <M-h> gT
+nnoremap <M-l> gt
+nmap <leader>h :tabn<CR>
+nmap <leader>l :tabp<CR>
+nmap <silent><leader>tn :tabn<CR> 
+nmap <silent><leader>tp :tabp<CR>
+
+map <M-1> 1gt
+map <M-2> 2gt
+map <M-3> 3gt
+map <M-4> 4gt
+map <M-5> 5gt
+map <M-6> 6gt
+map <M-7> 7gt
+map <M-8> 8gt
+map <M-9> 9gt
+
+imap <M-1> 1gt
+imap <M-2> 2gt
+imap <M-3> 3gt
+imap <M-4> 4gt
+imap <M-5> 5gt
+imap <M-6> 6gt
+imap <M-7> 7gt
+imap <M-8> 8gt
+imap <M-9> 9gt
+
+nmap <leader>j :bn<CR>
+nmap <leader>k :bp<CR>
+nmap <leader>bn :bn<CR>
+nmap <leader>bp :bp<CR>
+nmap <M-j> :bn<CR>
+nmap <M-k> :bp<CR>
+
+"noremap! <M-j> <Down>
+"noremap! <M-k> <Up>
+"noremap! <M-h> <left>
+"noremap! <M-l> <Right>
+
+" g<c-]> is jump to tag if there's only one matching tag, but show list of
+" options when there is more than one definition
+nnoremap <leader>g g<c-]>
 noremap <c-]> g<c-]>
-
-"map <Leader>mbe :MiniBufExplorer<cr>
-"map <Leader>mbc :CMiniBufExplorer<cr>
-"map <Leader>mbt :TMiniBufExplorer<cr>
-let g:miniBufExplSplitBelow=0
-"let g:miniBufExplSplitToEdge=0
-"let g:miniBufExplorerMoreThanOne=1
-let g:miniBufExplModSelTarget = 1
-let g:miniBufExplTabWrap = 1
-"let g:miniBufExplMapWindowNavVim = 1
-let g:miniBufExplMapCTabSwitchBufs = 1
-"let g:miniBufExplMaxSize =1
-
-nnoremap <silent><F1> :BufExplorer<CR>
-nnoremap <silent><F2> :NERDTreeToggle<CR>
-inoremap <F2> <ESC>:NERDTreeToggle<CR>
-nnoremap <silent><F3> :TagbarToggle<CR>
-inoremap <F3> <ESC>:TagbarToggle<CR>
-
-set sessionoptions=blank,buffers,sesdir,folds,tabpages,winsize,slash,unix
-nmap <leader>sl :SessionList<CR>
-nmap <leader>ss :SessionSave<CR>
 
 " Code folding options
 nmap <leader>f0 :set foldlevel=0<CR>
@@ -434,57 +613,105 @@ nmap <leader>f6 :set foldlevel=6<CR>
 nmap <leader>f7 :set foldlevel=7<CR>
 nmap <leader>f8 :set foldlevel=8<CR>
 nmap <leader>f9 :set foldlevel=9<CR>
-nnoremap <Leader>z @=((foldclosed(line('.')) < 0) ? 'zc' : 'zo')<CR>
+nnoremap <leader>z @=((foldclosed(line('.')) < 0) ? 'zc' : 'zo')<CR>
 
-" Tabmam setting
+nnoremap <silent><F1> :BufExplorer<CR>
+
+"map <leader>mbe :MiniBufExplorer<CR>
+"map <leader>mbc :CMiniBufExplorer<CR>
+"map <leader>mbt :TMiniBufExplorer<CR>
+let g:miniBufExplSplitBelow=0
+"let g:miniBufExplSplitToEdge=0
+let g:miniBufExplorerMoreThanOne=100
+let g:miniBufExplModSelTarget = 1
+let g:miniBufExplTabWrap = 1
+"let g:miniBufExplMapWindowNavVim = 1
+let g:miniBufExplMapCTabSwitchBufs = 1
+"let g:miniBufExplMaxSize =1
+
+"{{{ Session List
+set sessionoptions=blank,buffers,curdir,folds,tabpages,winsize
+nmap <silent><leader>sl :SessionList<CR>
+nmap <leader>ss :SessionSave<CR>
+"}}}
+
+"{{{ Tabmam setting
 let g:tabman_toggle= '<leader>ttm'
 let g:tabman_focus= '<leader>tmf'
 "let g:tabman_number=0
+"}}}
 
-" Tagbar Toggle
+"{{{ rainbow_parentheses setting
+let g:rbpt_colorpairs = [
+    \ ['brown',       'RoyalBlue3'],
+    \ ['Darkblue',    'SeaGreen3'],
+    \ ['darkgray',    'DarkOrchid3'],
+    \ ['darkgreen',   'firebrick3'],
+    \ ['darkcyan',    'RoyalBlue3'],
+    \ ['darkred',     'SeaGreen3'],
+    \ ['darkmagenta', 'DarkOrchid3'],
+    \ ['brown',       'firebrick3'],
+    \ ['gray',        'RoyalBlue3'],
+    \ ['black',       'SeaGreen3'],
+    \ ['darkmagenta', 'DarkOrchid3'],
+    \ ['Darkblue',    'firebrick3'],
+    \ ['darkgreen',   'RoyalBlue3'],
+    \ ['darkcyan',    'SeaGreen3'],
+    \ ['darkred',     'DarkOrchid3'],
+    \ ['red',         'firebrick3'],
+    \ ]
+let g:rbpt_max = 16
+let g:rbpt_loadcmd_toggle = 0
+
+au VimEnter * RainbowParenthesesToggle
+au Syntax * RainbowParenthesesLoadRound
+au Syntax * RainbowParenthesesLoadSquare
+au Syntax * RainbowParenthesesLoadBraces
+"}}}
+
+" Tagbar Toggle {
+nnoremap <silent><F4> :TagbarToggle<CR>
 let g:tagbar_autofocus=1
 let g:tagbar_ctags_bin = ctagsbin
-
-" Toggle paste mode
-nmap <silent> <leader>tp :set invpaste<cr>:set paste?<cr>
-
-" show invisible chars
-nmap <Leader>tsl :set list!<CR>
-nmap <silent> <leader>/ :nohlsearch<CR>
+" }
 
 " Toggle Undotree
-nnoremap <Leader>tud :UndotreeToggle<cr>
+nnoremap <leader>tud :UndotreeToggle<CR>
 
-" Tab navigation
-map <C-A-h> :tabp<CR>
-map <C-A-l> :tabn<CR>
-imap <C-A-h> <ESC>:tabp<CR>
-imap <C-A-l> <ESC>:tabn<CR>
-"map <C-S-m> :tabm<CR>
-"map tt :tabnew<CR>
+" FencView
+let g:fencview_autodetect=0
 
-" Navigate windows with ALT+arrows
-nmap <C-j> <C-w>j
-nmap <C-k> <C-w>k
-nmap <C-h> <C-w>h
-nmap <C-l> <C-w>l
-"imap <C-j> <ESC><C-w>j
-"imap <C-k> <ESC><C-w>k
-"imap <C-h> <ESC><C-w>h
-"imap <C-l> <ESC><C-w>l
+set wildignore+=*.o,*.obj
+set wildignore+=*.aux,*.bbl,*.blg,*.toc,*.out,*.bak,*.mtc0,*.maf,*.mtc
+"set wildignore+=*.dvi,*.pdf
+"set wildignore+=*.jpg,*.png,*.tiff
 
-nmap <C-right> :bn<CR>
-nmap <C-left> :bp<CR>
+"{{{ NERDTree
+nnoremap <silent><F2> :NERDTreeToggle<CR>
+inoremap <silent><F2> <ESC>:NERDTreeToggle<CR>
+map <silent><leader>ntm :NERDTreeMirror<CR>
+map <silent><leader>ntt :NERDTreeToggle<CR>
+map <silent><leader>ntf :NERDTreeFind<CR>
+let NERDChristmasTree=1
+let NERDTreeShowHidden=1
+let NERDTreeShowBookmarks=1
+let NERDTreeIgnore = ['\~$', '\obj$[[dir]]', '\.$[[dir]]', '\.o$', '\.swp$','\.db$', '\.git', '\.hg', '\.svn', '\.bzr']
+"let NERDTreeMinimalUI=1
+let NERDTreeDirArrows=1
+let NERDTreeMouseMode=2
+"let g:NERDTreeBookmarksFile = expand("$HOME/.vim/NERDTreeBookmarks")
+"}}}
 
-noremap! <M-j> <Down>
-noremap! <M-k> <Up>
-noremap! <M-h> <left>
-noremap! <M-l> <Right>
+" NERDComment
+"imap <C-S-c> <plug>NERDCommenterInsert
+let g:NERDRemoveExtraSpaces = 1
+
+" BufExplorer
+let g:bufExplorerSplitBelow=1
 
 "Quickfix
 nmap <silent><leader>qn :cn<CR>
 nmap <silent><leader>qp :cp<CR>
-nmap <silent><leader>cw :cw 10<CR>
 
 com! -bang -nargs=? QFix cal QFixToggle(<bang>0)
 fu! QFixToggle(forced)
@@ -496,51 +723,93 @@ fu! QFixToggle(forced)
         let g:qfix_win = bufnr("$")
     en
 endf
-nnoremap <silent><leader>q :QFix<cr>
+nnoremap <silent><leader>q :QFix<CR>
 
-" FencView
-let g:fencview_autodetect=0
+nmap <silent><F3> *
+nmap <silent><C-F3> #
 
-" NERDTree
-map <leader>ntm :NERDTreeMirror<CR>
-map <leader>ntf :NERDTreeFind<CR>
-let NERDChristmasTree=1
-let NERDTreeShowHidden=1
-let NERDTreeShowBookmarks=1
-let NERDTreeIgnore = ['\~$', '\obj$[[dir]]', '\.$[[dir]]', '\.o$', '\.swp$','\.db$', '\.git', '\.hg', '\.svn', '\.bzr']
-"let NERDTreeMinimalUI=1
-let NERDTreeDirArrows=1
-let NERDTreeMouseMode=2
+"{{{ Basically you press * or # to search for the current selection
+function! VisualSearch(direction) range
+    let l:saved_reg = @"
+    execute "normal! vgvy"
 
-" BufExplorer
-let g:bufExplorerSplitBelow=1
+    let l:pattern = escape(@", '\\/.*$^~[]')
+    let l:pattern = substitute(l:pattern, "\n$", "", "")
 
-"nmap <silent><F3> :execute "let g:word=expand(\"<cword>\")"<Bar>execute "/" . g:word<CR>
-nmap <silent><leader>f :lv /<c-r>=expand("<cword>")<cr>/ %<cr>:lw<cr>
-map <silent><F3> *
+    if a:direction == 'b'
+        execute "normal ?" . l:pattern . "^M"
+    elseif a:direction == 'gv'
+        execute "Ack " . l:pattern . ' %'
+    elseif a:direction == 'f'
+        execute "normal /" . l:pattern . "^M"
+    endif
+
+    let @/ = l:pattern
+    let @" = l:saved_reg
+endfunction
+
+vnoremap <silent> * :call VisualSearch('f')<CR>
+vnoremap <silent> # :call VisualSearch('b')<CR>
+vnoremap <silent> gv :call VisualSearch('gv')<CR>
+vnoremap <silent><F3> :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy/<C-R><C-R>=substitute(
+  \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gV:call setreg('"', old_reg, old_regtype)<CR>
+vnoremap <silent><C-F3> :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy?<C-R><C-R>=substitute(
+  \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gV:call setreg('"', old_reg, old_regtype)<CR>
+"}}}
+
+" simple recursive grep
+command! -nargs=1 RecurGrep lvimgrep /<args>/gj ./**/*.* | lopen | set nowrap
+command! -nargs=1 RecurGrepFast silent exec 'lgrep! <q-args> ./**/*.*' | lopen
+map <C-F1> :execute "vimgrep /" . expand("<cword>") . "/gj **" <Bar> cw<CR>
+
+noremap <silent><leader>a :Ack! <cword><CR>
+noremap <silent><leader>aa :Ack! -a <cword><CR>
+noremap <silent><leader>w :Ack! -w <cword><CR>
+noremap <silent><leader>wa :Ack! -a -w <cword><CR>
+noremap <silent><leader>A :Ack! <cword> %<CR>
+noremap <silent><leader>W :Ack! -w <cword> %<CR>
+
+let g:EasyGrepCommand=1
+let g:EasyGrepRecursive=1
+let g:EasyGrepJumpToMatch=0
 
 " CtrlP (new fuzzy finder)
 let g:ctrlp_map = '<leader>p'
+let g:ctrlp_by_filename = 1
+" Don't change working directory
+let g:ctrlp_working_path_mode = 0
 " to be able to call CtrlP with default search text
 function! CtrlPWithSearchText(search_text, ctrlp_command_end)
     execute ':CtrlP' . a:ctrlp_command_end
     call feedkeys(a:search_text)
 endfunction
 " CtrlP with default text
-nmap ,wg :call CtrlPWithSearchText(expand('<cword>'), 'BufTag')<CR>
-nmap ,wG :call CtrlPWithSearchText(expand('<cword>'), 'BufTagAll')<CR>
-nmap ,wf :call CtrlPWithSearchText(expand('<cword>'), 'Line')<CR>
-nmap ,d ,wg
-nmap ,D ,wG
-nmap ,we :call CtrlPWithSearchText(expand('<cword>'), '')<CR>
-nmap ,pe :call CtrlPWithSearchText(expand('<cfile>'), '')<CR>
-nmap ,wm :call CtrlPWithSearchText(expand('<cword>'), 'MRUFiles')<CR>
-" Don't change working directory
-let g:ctrlp_working_path_mode = 0
+nmap <leader>fpt  :call CtrlPWithSearchText(expand('<cword>'), 'Tag')<CR>
+nmap <leader>fpl  :call CtrlPWithSearchText(expand('<cword>'), 'Line')<CR>
+nmap <leader>fpb  :call CtrlPWithSearchText(expand('<cword>'), 'Buffer')<CR>
+nmap <leader>fps  :call CtrlPWithSearchText(expand('<cword>'), 'BufTag')<CR>
+nmap <leader>fpa  :call CtrlPWithSearchText(expand('<cword>'), 'BufTagAll')<CR>
+nmap <leader>fpm  :call CtrlPWithSearchText(expand('<cword>'), 'MRUFiles')<CR>
+nmap <leader>fpw  :call CtrlPWithSearchText(expand('<cword>'), '')<CR>
+nmap <leader>fpf  :call CtrlPWithSearchText(expand('<cfile>'), '')<CR>
 " Ignore files on fuzzy finder
 let g:ctrlp_custom_ignore = {
-            \ 'dir': '\v[\/](\.git|\.hg|\.svn)$',
-            \ 'file': '\.pyc$\|\.pyo$',
+            \ 'dir': '\.git$\|\.hg$\|\.svn$',
+            \ 'file': '\.pyc$\|\.pyo$|\.o$',
+            \ }
+
+let g:ctrlp_user_command = {
+            \ 'types': {
+            \ 1: ['.git', 'cd %s && git ls-files'],
+            \ 2: ['.hg', 'hg --cwd %s locate -I .'],
+            \ },
+            \ 'fallback': 'find %s -type f'
             \ }
 
 "jump to last cursor position when opening a file
@@ -556,7 +825,7 @@ function! SetCursorPosition()
 endfunction
 
 " Switch to current dir
-nnoremap <silent> <leader>cd :cd %:p:h<cr>
+nnoremap <silent><leader>cd :cd %:p:h<CR>
 
 " [add a header to the top of the file]
 function! Toggle_Add_Header()
@@ -751,10 +1020,6 @@ endif
 "" 1 = select first popup item (inserting it to the text)
 "" 2 = select first popup item (without inserting it to the text)
 "let OmniCpp_SelectFirstItem = 1
-
-" NERDComment
-"imap <C-S-c> <plug>NERDCommenterInsert
-let g:NERDRemoveExtraSpaces = 1
 
 "let g:AutoClosePairs_add = "<>"
 " Fix to let ESC work as espected with Autoclose plugin
