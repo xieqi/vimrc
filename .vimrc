@@ -65,25 +65,35 @@ Bundle 'kien/ctrlp.vim'
 "Bundle 'xolox/vim-session'
 Bundle 'sessionman.vim'
 Bundle 'matchit.zip'
+"Bundle 'Yggdroot/vim-mark'
 Bundle 'IndexedSearch'
 "Bundle 'SearchComplete'
 Bundle 'Lokaltog/vim-easymotion'
 "Bundle 'kien/tabman.vim'
-Bundle 'kien/rainbow_parentheses.vim'
+Bundle 'oblitum/rainbow'
+"Bundle 'kien/rainbow_parentheses.vim'
 " Input Method
 Bundle 'VimIM'
 " Colorscheme
 Bundle 'altercation/vim-colors-solarized'
-Bundle 'Wombat'
 Bundle 'tomasr/molokai'
+Bundle 'morhetz/gruvbox'
+Bundle 'nanotech/jellybeans.vim'
+Bundle 'sjl/badwolf'
+Bundle 'Wombat'
 Bundle 'manuscript'
-if (has("python") || has("python3")) 
-    Bundle 'Lokaltog/powerline', {'rtp':'powerline/bindings/vim'}
-else
-    Bundle 'Lokaltog/vim-powerline'
-endif
-Bundle 'nathanaelkane/vim-indent-guides'
-"Bundle 'Yggdroot/indentLine'
+Bundle 'chriskempson/vim-tomorrow-theme'
+Bundle 'chriskempson/base16-vim'
+
+"if (has("python") || has("python3")) 
+    "Bundle 'Lokaltog/powerline', {'rtp':'powerline/bindings/vim'}
+"else
+    "Bundle 'Lokaltog/vim-powerline'
+"endif
+Bundle 'bling/vim-airline'
+"Bundle 'millermedeiros/vim-statline'
+"Bundle 'nathanaelkane/vim-indent-guides'
+Bundle 'Yggdroot/indentLine'
 "Bundle 'michaeljsmith/vim-indent-object'
 Bundle 'bufexplorer.zip'
 Bundle 'fholgado/minibufexpl.vim'
@@ -93,7 +103,7 @@ Bundle 'FencView.vim'
 
 " General Programming
 "Bundle 'scrooloose/syntastic'
-"Bundle 'tpope/vim-fugitive'
+Bundle 'tpope/vim-fugitive'
 Bundle 'scrooloose/nerdcommenter'
 Bundle 'majutsushi/tagbar'
 "Bundle 'mileszs/ack.vim'
@@ -146,6 +156,7 @@ set cursorline
 if has('statusline')
     set laststatus=2
     let g:Powerline_symbols = "fancy"
+    let g:airline_powerline_fonts=1
     "set statusline=
     "set statusline+=%1* "switch to User1 highlight
     "set statusline+=\ %F "relative path
@@ -158,8 +169,6 @@ if has('statusline')
     "set statusline+=\ %(%l,%c%V%)\ %p%% "line percentage in file
     "set statusline+=%< "truncate
 endif
-"set listchars=nbsp:·,tab:©¬,eol:¶,trail:§,extends:»,precedes:«
-set listchars=tab:>-,eol:¬,trail:$,extends:»,precedes:«
 syntax on
 set nowrap
 "set spell
@@ -174,76 +183,6 @@ set viewoptions=folds,options,cursor,unix,slash
 " abbrev. of messages (avoids 'hit enter')
 set shortmess+=filmnrxoOtT
 set splitbelow
-
-set background=dark
-
-"{{{ solarized colorscheme setting
-if filereadable(expand("~/.vim/bundle/vim-colors-solarized/colors/solarized.vim"))
-    let g:solarized_termcolors=256
-    let g:solarized_termtrans=1
-    let g:solarized_contrast="high"
-    "let g:solarized_visibility="high"
-endif
-"}}}
-
-if has("gui_running")
-    set guioptions+=b
-    set guioptions-=m
-    set guioptions-=T
-    colorscheme solarized
-    if MySys() == "windows"
-        "set guifont=DejaVu_Sans_Mono_for_Powerline:h16 
-        set guifont=Inconsolata_for_Powerline:h18
-        au GUIEnter * simalt ~x
-    else
-        au GUIEnter * set lines=999 columns=999
-        set guifont=Monaco\ for\ Powerline\ 16
-    endif
-else
-    " use 256 colors when possible
-    if &term =~? 'mlterm\|xterm\|screen-256'
-        let &t_Co = 256
-    endif
-    colorscheme molokai
-endif
-
-"{{{ molokai colorscheme setting
-let g:molokai_original = 1
-"}}}
-
-let g:fullscreen = 0
-function! ToggleFullscreen()
-    if g:fullscreen == 1
-        let g:fullscreen = 0
-        let mod = "remove"
-    else
-        let g:fullscreen = 1
-        let mod = "add"
-    endif
-    call system("wmctrl -ir " . v:windowid . " -b " . mod . ",fullscreen")
-endfunction
-
-map <silent><F11> :call ToggleFullscreen()<CR>
-
-"{{{ Highlight Class and Function names
-function! s:HighlightFunctionsAndClasses()
-  syn match cCustomFunc "\w\+\s*\((\)\@="
-  syn match cCustomClass "\w\+\s*\(::\)\@="
-
-  hi def link cCustomFunc Function
-  hi def link cCustomClass Function
-endfunction
-"}}}
-au Syntax * call s:HighlightFunctionsAndClasses()
-
-" vim-indent-guides setting {
-"let g:indent_guides_enable_on_vim_startup = 1
-let g:indent_guides_guide_size = 1
-let g:indent_guides_start_level = 2
-let g:indent_guides_soft_pattern = ' '
-let g:indent_guides_exclude_filetypes = ['help', 'nerdtree']
-nmap <silent><leader>tig <Plug>IndentGuidesToggle
-" }
 
 " Fold Setting
 set foldenable
@@ -306,37 +245,25 @@ set autoindent
 set smartindent
 set cinoptions=:0g0t0(susj1
 
-function! InitializeDirectories()
-    let separator = "."
-    let parent = $HOME
-    let prefix = '.vim'
-    let dir_list = {
-                \ 'backup': 'backupdir',
-                \ 'views': 'viewdir',
-                \ 'swap': 'directory' }
+set undodir=$HOME/.vim/undo     " undo files
+set backupdir=$HOME/.vim/backup " backups
+set viewdir=$HOME/.vim/views    " view files
+set directory=$HOME/.vim/swap   " swap files
+" Make those folders automatically if they don't already exist.
+if !isdirectory(expand(&undodir))
+    call mkdir(expand(&undodir), "p")
+endif
+if !isdirectory(expand(&backupdir))
+    call mkdir(expand(&backupdir), "p")
+endif
+if !isdirectory(expand(&viewdir))
+    call mkdir(expand(&viewdir), "p")
+endif
+if !isdirectory(expand(&directory))
+    call mkdir(expand(&directory), "p")
+endif
 
-    if has('persistent_undo')
-        let dir_list['undo'] = 'undodir'
-    endif
-
-    for [dirname, settingname] in items(dir_list)
-        let directory = parent . '/' . prefix . '/' . dirname . "/"
-        if exists("*mkdir")
-            if !isdirectory(directory)
-                call mkdir(directory)
-            endif
-        endif
-        if !isdirectory(directory)
-            echo "Warning: Unable to create backup directory: " . directory
-            echo "Try: mkdir -p " . directory
-        else
-            let directory = substitute(directory, " ", "\\\\ ", "g")
-            exec "set " . settingname . "=" . directory
-        endif
-    endfor
-endfunction
-call InitializeDirectories()
-
+"{{{ Set up cscope and ctag  environment
 " search for exuberant ctags
 let ctagsbins = []
 let ctagsbins += ['ctags']
@@ -351,13 +278,13 @@ endfor
 unlet ctagsbins
 
 set csprg=cscope
-"set cscopetagorder=1
-"set nocscopetag
-set cscopetagorder=0
+" use both cscope and ctag for 'ctrl-]', ':ta', and 'vim -t'
 set cscopetag
+" check cscope for definition of a symbol before checking ctags:
+" set to 1 if you want the reverse search order.
+set cscopetagorder=0
 set cscopequickfix=c-,d-,e-,f-,g-,i-,s-,t-
 
-"{{{ Set up cscope and ctag  environment
 function! ToggleCscopeCtags()
     if g:ctagsbin == ''
         echomsg 'No ctags found!'
@@ -400,9 +327,7 @@ endfunction
 nnoremap <silent><C-F4> :call ToggleCscopeCtags()<CR>
 nnoremap <silent><leader>tcs :call ToggleCscopeCtags()<CR>
 
-" Cscope hot keys
 " The following maps all invoke one of the following cscope search types:
-"
 "   's'   symbol: find all references to the token under cursor
 "   'g'   global: find global definition(s) of the token under cursor
 "   'c'   calls:  find all calls to the function name under cursor
@@ -419,16 +344,16 @@ nnoremap <silent><leader>ft :cs find t <C-R>=expand("<cword>")<CR><CR>
 nnoremap <silent><leader>fe :cs find e <C-R>=expand("<cword>")<CR><CR>
 nnoremap <silent><leader>ff :cs find f <C-R>=expand("<cfile>")<CR><CR>
 nnoremap <silent><leader>fi :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-nnoremap <leader>fu :cs find s 
+nnoremap <leader>fu :cs find s
 
-nnoremap <silent><leader>sfs :scs find s <C-R>=expand("<cword>")<CR><CR>
-nnoremap <silent><leader>sfg :scs find g <C-R>=expand("<cword>")<CR><CR>
-nnoremap <silent><leader>sfd :scs find d <C-R>=expand("<cword>")<CR><CR>
-nnoremap <silent><leader>sfc :scs find c <C-R>=expand("<cword>")<CR><CR>
-nnoremap <silent><leader>sft :scs find t <C-R>=expand("<cword>")<CR><CR>
-nnoremap <silent><leader>sfe :scs find e <C-R>=expand("<cword>")<CR><CR>
-nnoremap <silent><leader>sff :scs find f <C-R>=expand("<cfile>")<CR><CR>
-nnoremap <silent><leader>sfi :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+nnoremap <silent><leader>vfs :scs find s <C-R>=expand("<cword>")<CR><CR>
+nnoremap <silent><leader>vfg :scs find g <C-R>=expand("<cword>")<CR><CR>
+nnoremap <silent><leader>vfd :scs find d <C-R>=expand("<cword>")<CR><CR>
+nnoremap <silent><leader>vfc :scs find c <C-R>=expand("<cword>")<CR><CR>
+nnoremap <silent><leader>vft :scs find t <C-R>=expand("<cword>")<CR><CR>
+nnoremap <silent><leader>vfe :scs find e <C-R>=expand("<cword>")<CR><CR>
+nnoremap <silent><leader>vff :scs find f <C-R>=expand("<cfile>")<CR><CR>
+nnoremap <silent><leader>vfi :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
 "}}}
 
 "{{{ Toggle darkStrip whitespace
@@ -446,21 +371,20 @@ endfunction
 nmap <silent><leader>trs :call StripTrailingWhitespace()<CR>:w<CR>
 "}}}
 
-"Remove the Windows ^M
-noremap <leader>m mmHmt:%s/<C-V><CR>//ge<CR>'tzt'm
-
-"{{{ Toggle dark/light background for solarized
-function! ToggleSolarized()
-    if &background == 'dark'
-        set background=light
-        colorscheme solarized
-    elseif &background == 'light'
-        set background=dark
-        colorscheme solarized
-    endif
-endfunc
-nmap <silent><leader>tbg :call ToggleSolarized()<CR>
+"{{{ Remove the Windows ^M
+noremap <silent><leader>trm mmHmt:%s/<C-V><CR>//ge<CR>'tzt'm
 "}}}
+
+" show invisible chars
+nmap <silent><leader>tsl :set list! listchars=tab:>-,eol:¬,trail:$,extends:»,precedes:«<CR>
+
+nmap <silent><leader>tst :set list! lcs=tab:\\|\ <CR>
+
+" Toggle paste mode
+nmap <silent><leader>tp :set invpaste<CR>:set paste?<CR>
+
+"Fast redraw
+nmap <silent><leader>trd :redraw!<CR>
 
 "{{{ Toggle cursorcolumn highlight
 let s:cchlflag=0
@@ -489,35 +413,45 @@ endfunction
 nmap <silent><leader>tln :call Toggle_Line_Number()<CR>
 "}}}
 
-nnoremap <silent><leader>tyr :YRShow<CR>
-let g:yankring_history_dir = expand('$HOME/.vim')
-let g:yankring_replace_n_pkey = '<m-p>'
-let g:yankring_replace_n_nkey = '<m-n>'
-
-"{{{ fswitch
-nnoremap <leader>fsh :FSHere<cr>
-nnoremap <leader>fsl :FSSplitLeft<cr>
-nnoremap <leader>fsr :FSSplitRight<cr>
-nnoremap <leader>fsb :FSSplitBelow<cr>
-nnoremap <leader>fsa :FSSplitAbove<cr>
+"{{{ Toggle full screen
+let g:fullscreen = 0
+function! ToggleFullscreen()
+    if g:fullscreen == 1
+        let g:fullscreen = 0
+        let mod = "remove"
+    else
+        let g:fullscreen = 1
+        let mod = "add"
+    endif
+    call system("wmctrl -ir " . v:windowid . " -b " . mod . ",fullscreen")
+endfunction
+map <silent><F11> :call ToggleFullscreen()<CR>
 "}}}
 
-"{{{ Tabularize
-nmap <leader>a= :Tabularize /=<cr>
-vmap <leader>a= :Tabularize /=<cr>
-nmap <leader>a: :Tabularize /:\zs<cr>
-vmap <leader>a: :Tabularize /:\zs<cr>
-nmap <leader>a:: :Tabularize /:<cr>
-vmap <leader>a:: :Tabularize /:<cr>
-nmap <leader>a& :Tabularize /&<cr>
-vmap <leader>a& :Tabularize /&<cr>
-nmap <leader>a, :Tabularize /,<cr>
-vmap <leader>a, :Tabularize /,<cr>
-nmap <leader>a<Bar> :Tabularize /<Bar><cr>
-vmap <leader>a<Bar> :Tabularize /<Bar><cr>
-"}}}
+" Highlight Class and Function names
+function! s:HighlightFunctionsAndClasses()
+  syn match cCustomFunc "\w\+\s*\((\)\@="
+  syn match cCustomClass "\w\+\s*\(::\)\@="
 
-let g:EasyMotion_leader_key = '<leader><leader>'
+  hi def link cCustomFunc Function
+  hi def link cCustomClass Function
+endfunction
+au Syntax * call s:HighlightFunctionsAndClasses()
+
+"jump to last cursor position when opening a file
+"dont do it when writing a commit log entry
+autocmd BufReadPost * call SetCursorPosition()
+function! SetCursorPosition()
+    if &filetype !~ 'svn\|commit\c'
+        if line("'\"") > 0 && line("'\"") <= line("$")
+            exe "normal! g`\""
+            normal! zz
+        endif
+    end
+endfunction
+
+" Switch to current dir
+nnoremap <silent><leader>cd :cd %:p:h<CR>
 
 " Fast saving
 nmap <silent><leader>ww :w<CR>
@@ -532,15 +466,6 @@ nmap <silent><leader>qa :qa<CR>
 " Fast remove highlight search
 nmap <silent><leader>/ :nohlsearch<CR>
 
-" show invisible chars
-nmap <silent><leader>tsl :set list!<CR>
-
-" Toggle paste mode
-nmap <silent><leader>tp :set invpaste<CR>:set paste?<CR>
-
-"Fast redraw
-nmap <silent><leader>rd :redraw!<CR>
-
 "Favorite filetypes
 set ffs=unix,dos
 
@@ -548,10 +473,14 @@ nmap <silent><leader>ffd :se ff=dos<CR>
 nmap <silent><leader>ffu :se ff=unix<CR>
 
 " easier navigation between split window
-map <C-j> <C-w>j
-map <C-k> <C-w>k
-map <C-h> <C-w>h
-map <C-l> <C-w>l
+noremap <C-J>     <C-W>j
+noremap <C-K>     <C-W>k
+noremap <C-H>     <C-W>h
+noremap <C-L>     <C-W>l
+noremap <C-Down>  <C-W>j
+noremap <C-Up>    <C-W>k
+noremap <C-Left>  <C-W>h
+noremap <C-Right> <C-W>l
 "imap <C-j> <ESC><C-w>j
 "imap <C-k> <ESC><C-w>k
 "imap <C-h> <ESC><C-w>h
@@ -613,10 +542,162 @@ nmap <leader>f6 :set foldlevel=6<CR>
 nmap <leader>f7 :set foldlevel=7<CR>
 nmap <leader>f8 :set foldlevel=8<CR>
 nmap <leader>f9 :set foldlevel=9<CR>
-nnoremap <leader>z @=((foldclosed(line('.')) < 0) ? 'zc' : 'zo')<CR>
+nnoremap <silent><leader>z @=((foldclosed(line('.')) < 0) ? 'zc' : 'zo')<CR>
 
+nmap <silent><F3> *
+nmap <silent><C-F3> #
+
+"{{{ Basically you press * or # to search for the current selection
+function! VisualSearch(direction) range
+    let l:saved_reg = @"
+    execute "normal! vgvy"
+
+    let l:pattern = escape(@", '\\/.*$^~[]')
+    let l:pattern = substitute(l:pattern, "\n$", "", "")
+
+    if a:direction == 'b'
+        execute "normal ?" . l:pattern . "^M"
+    elseif a:direction == 'gv'
+        execute "Ack " . l:pattern . ' %'
+    elseif a:direction == 'f'
+        execute "normal /" . l:pattern . "^M"
+    endif
+
+    let @/ = l:pattern
+    let @" = l:saved_reg
+endfunction
+vnoremap <silent> * :call VisualSearch('f')<CR>
+vnoremap <silent> # :call VisualSearch('b')<CR>
+vnoremap <silent> gv :call VisualSearch('gv')<CR>
+
+vnoremap <silent><F3> :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy/<C-R><C-R>=substitute(
+  \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gV:call setreg('"', old_reg, old_regtype)<CR>
+vnoremap <silent><C-F3> :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy?<C-R><C-R>=substitute(
+  \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gV:call setreg('"', old_reg, old_regtype)<CR>
+"}}}
+
+"nmap <silent><unique><leader>c <Plug>MarkClear
+"nmap <silent><unique><leader>* <Plug>MarkSearchAnyNext
+"nmap <silent><unique><leader>n <Plug>MarkSearchCurrentNext
+"nmap <silent><unique><leader>N <Plug>MarkSearchCurrentPrev
+
+"jump to last cursor position when opening a file
+"dont do it when writing a commit log entry
+autocmd BufReadPost * call SetCursorPosition()
+function! SetCursorPosition()
+    if &filetype !~ 'svn\|commit\c'
+        if line("'\"") > 0 && line("'\"") <= line("$")
+            exe "normal! g`\""
+            normal! zz
+        endif
+    end
+endfunction
+
+" Switch to current dir
+nnoremap <silent><leader>cd :cd %:p:h<CR>
+
+"{{{ Add a header to the top of the file
+function! Toggle_Add_Header()
+    let headerstr=[]
+    let headerdict={}
+    let order=['\file','\brief','\author','\date',' ','\note']
+    let headerdict[order[0]]=expand("%:t")
+    let headerdict[order[1]]=inputdialog("Input the brief of this file: (<=35 characters)")
+    let headerdict[order[2]]=g:author
+    let headerdict[order[3]]=strftime("%Y-%m-%d %H:%M:%S")
+    let headerdict[order[4]]=''
+    let headerdict[order[5]]='some notes'
+    let headerstr+=["\/\*\*"]
+    for i in order
+        let headerstr+=[printf(" \* %s",printf("%-14s%-s",i,headerdict[i]))]
+    endfor
+    let headerstr+=[" \*\/"]
+    call append(0,headerstr)
+    call setpos(".",[0,1,1,"off"])
+endfunction
+nnoremap <silent> <leader>tah :call Toggle_Add_Header()<CR>
+"}}}
+
+"{{{ Quickfix
+com! -bang -nargs=? QFix cal QFixToggle(<bang>0)
+fu! QFixToggle(forced)
+    if exists("g:qfix_win") && a:forced == 0
+        cclose
+        unlet g:qfix_win
+    else
+        copen 5
+        let g:qfix_win = bufnr("$")
+    en
+endf
+nnoremap <silent><leader>q :QFix<CR>
+nmap <silent><leader>qn :cn<CR>
+nmap <silent><leader>qp :cp<CR>
+"}}}
+
+" Plugin Setting
+nnoremap <silent><leader>tyr :YRShow<CR>
+let g:yankring_history_dir = expand('$HOME/.vim')
+let g:yankring_replace_n_pkey = '<m-p>'
+let g:yankring_replace_n_nkey = '<m-n>'
+
+"{{{ molokai colorscheme setting
+let g:molokai_original = 1
+"}}}
+
+"{{{ vim-indent-guides setting
+if isdirectory(expand("~/.vim/bundle/vim-indent-guides"))
+    let g:indent_guides_enable_on_vim_startup = 1
+    let g:indent_guides_guide_size = 1
+    let g:indent_guides_start_level = 2
+    let g:indent_guides_soft_pattern = ' '
+    let g:indent_guides_exclude_filetypes = ['help', 'nerdtree']
+    nmap <silent><leader>tig <Plug>IndentGuidesToggle
+endif
+"}}}
+
+"{{{ indentLine setting
+if isdirectory(expand("~/.vim/bundle/indentLine"))
+    "let g:indentLine_showFirstIndentLevel = 1
+    let g:indentLine_enabled = 0 
+    nmap <silent><leader>tst :set list! lcs=tab:\\|\ <CR>
+    nmap <silent><leader>tsi :IndentLinesToggle<CR>
+endif
+"}}}
+
+"{{{ fswitch
+nnoremap <leader>sh :FSHere<CR>
+nnoremap <leader>sr :FSSplitRight<CR>
+nnoremap <leader>sb :FSSplitBelow<CR>
+nnoremap <leader>sa :FSSplitAbove<CR>
+"}}}
+
+"{{{ Tabularize
+nmap <leader>a= :Tabularize /=<CR>
+vmap <leader>a= :Tabularize /=<CR>
+nmap <leader>a: :Tabularize /:\zs<CR>
+vmap <leader>a: :Tabularize /:\zs<CR>
+nmap <leader>a:: :Tabularize /:<CR>
+vmap <leader>a:: :Tabularize /:<CR>
+nmap <leader>a& :Tabularize /&<CR>
+vmap <leader>a& :Tabularize /&<CR>
+nmap <leader>a, :Tabularize /,<CR>
+vmap <leader>a, :Tabularize /,<CR>
+nmap <leader>a<Bar> :Tabularize /<Bar><CR>
+vmap <leader>a<Bar> :Tabularize /<Bar><CR>
+"}}}
+
+let g:EasyMotion_leader_key = '<leader><leader>'
+
+" BufExplorer
+let g:bufExplorerSplitBelow=1
 nnoremap <silent><F1> :BufExplorer<CR>
-
+nnoremap <silent><leader>tbe :BufExplorer<CR>
 "map <leader>mbe :MiniBufExplorer<CR>
 "map <leader>mbc :CMiniBufExplorer<CR>
 "map <leader>mbt :TMiniBufExplorer<CR>
@@ -641,39 +722,62 @@ let g:tabman_focus= '<leader>tmf'
 "let g:tabman_number=0
 "}}}
 
-"{{{ rainbow_parentheses setting
-let g:rbpt_colorpairs = [
-    \ ['brown',       'RoyalBlue3'],
-    \ ['Darkblue',    'SeaGreen3'],
-    \ ['darkgray',    'DarkOrchid3'],
-    \ ['darkgreen',   'firebrick3'],
-    \ ['darkcyan',    'RoyalBlue3'],
-    \ ['darkred',     'SeaGreen3'],
-    \ ['darkmagenta', 'DarkOrchid3'],
-    \ ['brown',       'firebrick3'],
-    \ ['gray',        'RoyalBlue3'],
-    \ ['black',       'SeaGreen3'],
-    \ ['darkmagenta', 'DarkOrchid3'],
-    \ ['Darkblue',    'firebrick3'],
-    \ ['darkgreen',   'RoyalBlue3'],
-    \ ['darkcyan',    'SeaGreen3'],
-    \ ['darkred',     'DarkOrchid3'],
-    \ ['red',         'firebrick3'],
+" rainbow colors copied from and best suited for dark gruvbox colorscheme (https://github.com/morhetz/gruvbox):
+let g:rainbow_guifgs = [
+    \ '#458588',
+    \ '#b16286',
+    \ '#cc241d',
+    \ '#d65d0e',
+    \ '#458588',
+    \ '#b16286',
+    \ '#cc241d',
+    \ '#d65d0e',
+    \ '#458588',
+    \ '#b16286',
+    \ '#cc241d',
+    \ '#d65d0e',
+    \ '#458588',
+    \ '#b16286',
+    \ '#cc241d',
+    \ '#d65d0e',
     \ ]
-let g:rbpt_max = 16
-let g:rbpt_loadcmd_toggle = 0
+au FileType c,cpp,objc,objcpp call rainbow#load()
 
-au VimEnter * RainbowParenthesesToggle
-au Syntax * RainbowParenthesesLoadRound
-au Syntax * RainbowParenthesesLoadSquare
-au Syntax * RainbowParenthesesLoadBraces
+"{{{ rainbow_parentheses setting
+if isdirectory(expand("~/.vim/bundle/rainbow_parentheses"))
+    let g:rbpt_colorpairs = [
+        \ ['brown',       'RoyalBlue3'],
+        \ ['Darkblue',    'SeaGreen3'],
+        \ ['darkgray',    'DarkOrchid3'],
+        \ ['darkgreen',   'firebrick3'],
+        \ ['darkcyan',    'RoyalBlue3'],
+        \ ['darkred',     'SeaGreen3'],
+        \ ['darkmagenta', 'DarkOrchid3'],
+        \ ['brown',       'firebrick3'],
+        \ ['gray',        'RoyalBlue3'],
+        \ ['black',       'SeaGreen3'],
+        \ ['darkmagenta', 'DarkOrchid3'],
+        \ ['Darkblue',    'firebrick3'],
+        \ ['darkgreen',   'RoyalBlue3'],
+        \ ['darkcyan',    'SeaGreen3'],
+        \ ['darkred',     'DarkOrchid3'],
+        \ ['red',         'firebrick3'],
+        \ ]
+    let g:rbpt_max = 16
+    let g:rbpt_loadcmd_toggle = 0
+
+    au VimEnter * RainbowParenthesesToggle
+    au Syntax * RainbowParenthesesLoadRound
+    au Syntax * RainbowParenthesesLoadSquare
+    au Syntax * RainbowParenthesesLoadBraces
+endif
 "}}}
 
-" Tagbar Toggle {
+"{{{ Tagbar Toggle
 nnoremap <silent><F4> :TagbarToggle<CR>
 let g:tagbar_autofocus=1
 let g:tagbar_ctags_bin = ctagsbin
-" }
+"}}}
 
 " Toggle Undotree
 nnoremap <leader>tud :UndotreeToggle<CR>
@@ -681,10 +785,11 @@ nnoremap <leader>tud :UndotreeToggle<CR>
 " FencView
 let g:fencview_autodetect=0
 
-set wildignore+=*.o,*.obj
+set wildignore+=.hg,.git,.svn                    " Version control
+set wildignore+=*.o,*.obj,*.exe,*.dll,*.manifest " compiled object files
+set wildignore+=*.jpg,*.bmp,*.gif,*.png,*.jpeg   " binary images
+set wildignore+=*.sw?                            " Vim swap files
 set wildignore+=*.aux,*.bbl,*.blg,*.toc,*.out,*.bak,*.mtc0,*.maf,*.mtc
-"set wildignore+=*.dvi,*.pdf
-"set wildignore+=*.jpg,*.png,*.tiff
 
 "{{{ NERDTree
 nnoremap <silent><F2> :NERDTreeToggle<CR>
@@ -705,63 +810,6 @@ let NERDTreeMouseMode=2
 " NERDComment
 "imap <C-S-c> <plug>NERDCommenterInsert
 let g:NERDRemoveExtraSpaces = 1
-
-" BufExplorer
-let g:bufExplorerSplitBelow=1
-
-"Quickfix
-nmap <silent><leader>qn :cn<CR>
-nmap <silent><leader>qp :cp<CR>
-
-com! -bang -nargs=? QFix cal QFixToggle(<bang>0)
-fu! QFixToggle(forced)
-    if exists("g:qfix_win") && a:forced == 0
-        cclose
-        unlet g:qfix_win
-    else
-        copen 5
-        let g:qfix_win = bufnr("$")
-    en
-endf
-nnoremap <silent><leader>q :QFix<CR>
-
-nmap <silent><F3> *
-nmap <silent><C-F3> #
-
-"{{{ Basically you press * or # to search for the current selection
-function! VisualSearch(direction) range
-    let l:saved_reg = @"
-    execute "normal! vgvy"
-
-    let l:pattern = escape(@", '\\/.*$^~[]')
-    let l:pattern = substitute(l:pattern, "\n$", "", "")
-
-    if a:direction == 'b'
-        execute "normal ?" . l:pattern . "^M"
-    elseif a:direction == 'gv'
-        execute "Ack " . l:pattern . ' %'
-    elseif a:direction == 'f'
-        execute "normal /" . l:pattern . "^M"
-    endif
-
-    let @/ = l:pattern
-    let @" = l:saved_reg
-endfunction
-
-vnoremap <silent> * :call VisualSearch('f')<CR>
-vnoremap <silent> # :call VisualSearch('b')<CR>
-vnoremap <silent> gv :call VisualSearch('gv')<CR>
-vnoremap <silent><F3> :<C-U>
-  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
-  \gvy/<C-R><C-R>=substitute(
-  \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
-  \gV:call setreg('"', old_reg, old_regtype)<CR>
-vnoremap <silent><C-F3> :<C-U>
-  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
-  \gvy?<C-R><C-R>=substitute(
-  \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
-  \gV:call setreg('"', old_reg, old_regtype)<CR>
-"}}}
 
 " simple recursive grep
 command! -nargs=1 RecurGrep lvimgrep /<args>/gj ./**/*.* | lopen | set nowrap
@@ -811,42 +859,6 @@ let g:ctrlp_user_command = {
             \ },
             \ 'fallback': 'find %s -type f'
             \ }
-
-"jump to last cursor position when opening a file
-""dont do it when writing a commit log entry
-autocmd BufReadPost * call SetCursorPosition()
-function! SetCursorPosition()
-    if &filetype !~ 'svn\|commit\c'
-        if line("'\"") > 0 && line("'\"") <= line("$")
-            exe "normal! g`\""
-            normal! zz
-        endif
-    end
-endfunction
-
-" Switch to current dir
-nnoremap <silent><leader>cd :cd %:p:h<CR>
-
-" [add a header to the top of the file]
-function! Toggle_Add_Header()
-    let headerstr=[]
-    let headerdict={}
-    let order=['\file','\brief','\author','\date',' ','\note']
-    let headerdict[order[0]]=expand("%:t")
-    let headerdict[order[1]]=inputdialog("Input the brief of this file: (<=35 characters)")
-    let headerdict[order[2]]=g:author
-    let headerdict[order[3]]=strftime("%Y-%m-%d %H:%M:%S")
-    let headerdict[order[4]]=''
-    let headerdict[order[5]]='some notes'
-    let headerstr+=["\/\*\*"]
-    for i in order
-        let headerstr+=[printf(" \* %s",printf("%-14s%-s",i,headerdict[i]))]
-    endfor
-    let headerstr+=[" \*\/"]
-    call append(0,headerstr)
-    call setpos(".",[0,1,1,"off"])
-endfunction
-nnoremap <silent> <leader>tah :call Toggle_Add_Header()<CR>
 
 " old autocomplete keyboard shortcut
 imap <C-J> <C-X><C-O>
@@ -1025,3 +1037,45 @@ endif
 " Fix to let ESC work as espected with Autoclose plugin
 "let g:AutoClosePumvisible = {"ENTER": "\<C-Y>", "ESC": "\<ESC>"}
 
+
+set background=dark
+
+" solarized
+if isdirectory(expand("~/.vim/bundle/vim-colors-solarized"))
+    let g:solarized_termcolors=256
+    let g:solarized_termtrans=1
+    let g:solarized_contrast="high"
+    "let g:solarized_visibility="high"
+endif
+
+" molokai
+if isdirectory(expand("~/.vim/bundle/molokai"))
+    "let g:molokai_original = 1
+endif
+
+if has("gui_running")
+    set guioptions+=b
+    set guioptions-=m
+    set guioptions-=T
+    colorscheme molokai
+    if MySys() == "windows"
+        set guifont=Powerline_Consolas:h11:cANSI
+        au GUIEnter * simalt ~x
+    else
+        au GUIEnter * set lines=999 columns=999
+        set guifont=Monaco\ for\ Powerline\ 12
+    endif
+else
+    if MySys() == "windows"
+        let &t_Co = 16
+        colorscheme desert
+    else
+        " use 256 colors when possible
+        if &term =~? 'mlterm\|xterm\|screen-256'
+            let &t_Co = 256
+        else
+            let &t_Co = 16
+        endif
+        colorscheme jellybeans
+    endif
+endif
