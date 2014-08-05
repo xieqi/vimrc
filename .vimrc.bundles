@@ -1,0 +1,362 @@
+" Modeline and Notes {
+" vim: set sw=4 ts=4 sts=4 et tw=78 foldmarker={,} foldlevel=100 foldmethod=marker :
+" }
+
+" Environment {
+
+    " Basics {
+        set nocompatible        " Must be first line
+        set background=dark     " Assume a dark background
+    " }
+
+    " Windows Compatible {
+        " On Windows, also use '.vim' instead of 'vimfiles'; this makes synchronization
+        " across (heterogeneous) systems easier.
+        if has('win32') || has('win64')
+            set runtimepath=$HOME/.vim,$VIM/vimfiles,$VIMRUNTIME,$VIM/vimfiles/after,$HOME/.vim/after
+        endif
+    " }
+
+    " Encoding {
+        if has("multi_byte")
+            set encoding=utf-8
+            scriptencoding utf-8
+            set fileencoding=utf-8
+            set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
+            if WINDOWS()
+                set termencoding=cp936
+            else
+                set termencoding=utf-8
+            endif
+            set langmenu=en_US.UTF-8
+            language messages en_US.UTF-8
+            set ambiwidth=single
+        endif
+    " }
+
+    " Setup Bundle Support {
+        " The next three lines ensure that the ~/.vim/bundle/ system works
+        filetype off
+        set rtp+=~/.vim/bundle/Vundle.vim
+        "call vundle#rc()
+        call vundle#begin()
+    " }
+
+" }
+
+" Bundles {
+
+    " Deps {
+        Plugin 'VundleVim/Vundle.vim'
+    " }
+
+    " color schemes {
+        Plugin 'altercation/vim-colors-solarized'
+        Plugin 'tomasr/molokai'
+        Plugin 'chriskempson/vim-tomorrow-theme'
+        Plugin 'chriskempson/base16-vim'
+        Plugin 'sjl/badwolf'
+        Plugin 'nanotech/jellybeans.vim'
+        Plugin 'w0ng/vim-hybrid'
+        Plugin 'zeis/vim-kolor'
+        Plugin 'jnurmine/Zenburn'
+    " }
+
+    " General {
+        if count(g:m_vim_settings.plugin_groups, 'general')
+            " Ack can be used as a replacement for 99% of the uses of grep
+            Plugin 'mileszs/ack.vim'
+
+            " A tree explorer plugin
+            Plugin 'scrooloose/nerdtree'
+
+            " Delete/change/add parentheses/quotes/XML-tags/much more with ease
+            Plugin 'tpope/vim-surround'
+
+            " enable repeating supported plugin maps with "."
+            Plugin 'tpope/vim-repeat'
+
+            " Fuzzy file, buffer, mru, tag, etc finder
+            Plugin 'ctrlpvim/ctrlp.vim'
+
+            " Navigate and jump to function defs
+            Plugin 'tacahiroy/ctrlp-funky'
+
+            " True Sublime Text style multiple selections for Vim
+            Plugin 'terryma/vim-multiple-cursors'
+
+            " Vim session manager
+            Plugin 'vim-scripts/sessionman.vim'
+            "Plugin 'xolox/vim-session'
+
+            " extended % matching for HTML, LaTeX, and many other languages
+            Plugin 'matchit.zip'
+
+            " lean & mean status/tabline for vim that's light as air
+            Plugin 'vim-airline/vim-airline'
+            Plugin 'vim-airline/vim-airline-themes'
+
+            " Vim motions on speed
+            Plugin 'easymotion/vim-easymotion'
+
+            "Plugin 'mbbill/undotree'
+            Plugin 'sjl/gundo.vim'
+
+            " visually displaying indent levels in code
+            Plugin 'nathanaelkane/vim-indent-guides'
+
+            " display the indention levels with thin vertical lines
+            Plugin 'Yggdroot/indentLine'
+
+            " easily search for, substitute, and abbreviate multiple variants of a word
+            Plugin 'tpope/vim-abolish'
+
+            " :substitute preview
+            "Plugin 'osyo-manga/vim-over'
+
+            "Plugin 'kana/vim-textobj-user'
+
+            "Plugin 'kana/vim-textobj-indent'
+
+            " Smart selection of the closest text object
+            Plugin 'gcmt/wildfire.vim'
+
+            " auto-completion for quotes, parens, brackets, etc
+            Plugin 'Raimondi/delimitMate'
+            "Plugin 'jiangmiao/auto-pairs'
+
+            " Buffer Explorer / Browser
+            Plugin 'jlanzarotta/bufexplorer'
+
+            " Elegant buffer explorer
+            "Plugin 'techlivezheng/vim-plugin-minibufexpl'
+
+            " shows 'Nth match out of M' at every search
+            Plugin 'henrik/vim-indexed-search'
+
+            " Fast and Easy Find and Replace Across Multiple Files
+            Plugin 'dkprice/vim-easygrep'
+
+            " visually select increasingly larger regions of text
+            "Plugin 'terryma/vim-expand-region'
+
+            " Simplify Doxygen documentation in C, C++, Python
+            "Plugin 'DoxygenToolkit.vim'
+        endif
+    " }
+
+    " Writing {
+        if count(g:m_vim_settings.plugin_groups, 'writing')
+            Plugin 'reedes/vim-litecorrect'
+            Plugin 'kana/vim-textobj-entire'
+            Plugin 'lucapette/vim-textobj-underscore'
+            Plugin 'reedes/vim-wordy'
+        endif
+    " }
+
+    " General Programming {
+        if count(g:m_vim_settings.plugin_groups, 'programming')
+
+            " easy code formatting in Vim
+            Plugin 'Chiel92/vim-autoformat'
+
+            " Syntax checking
+            Plugin 'scrooloose/syntastic'
+
+            " An extensible & universal comment vim-plugin
+            "Plugin 'tomtom/tcomment_vim'
+
+            " intensely orgasmic commenting
+            Plugin 'scrooloose/nerdcommenter'
+
+            " Comment stuff out
+            "Plugin 'tpope/vim-commentary'
+
+            " text filtering and alignment
+            Plugin 'godlygeek/tabular'
+
+            " Rainbow Parentheses Improve
+            Plugin 'luochen1990/rainbow'
+
+            " displays tags in a window, ordered by scope
+            Plugin 'majutsushi/tagbar'
+
+            " Additional Vim syntax highlighting for C++ (including C++11/14)
+            Plugin 'octol/vim-cpp-enhanced-highlight'
+        endif
+    " }
+
+    " SCM {
+        if count(g:m_vim_settings.plugin_groups, 'scm')
+
+            " a Git wrapper so awesome
+            Plugin 'tpope/vim-fugitive'
+
+            " gitk for Vim
+            "Plugin 'gregsexton/gitv'
+
+            "A Vim plugin which shows a git diff in the gutter (sign column) and stages/undoes hunks
+            Plugin 'airblade/vim-gitgutter'
+
+            " Show a VCS diff using Vim's sign column
+            "Plugin 'mhinz/vim-signify'
+        endif
+    " }
+
+    " Snippets & AutoComplete {
+        if count(g:m_vim_settings.plugin_groups, 'snipmate')
+            Plugin 'garbas/vim-snipmate'
+            Plugin 'honza/vim-snippets'
+            " Source support_function.vim to support vim-snippets.
+            if filereadable(expand("~/.vim/bundle/vim-snippets/snippets/support_functions.vim"))
+                source ~/.vim/bundle/vim-snippets/snippets/support_functions.vim
+            endif
+        elseif count(g:m_vim_settings.plugin_groups, 'youcompleteme')
+            Plugin 'Valloric/YouCompleteMe'
+            Plugin 'rdnetto/YCM-Generator'
+            Plugin 'SirVer/ultisnips'
+            Plugin 'honza/vim-snippets'
+        elseif count(g:m_vim_settings.plugin_groups, 'neocomplcache')
+            Plugin 'Shougo/neocomplcache.vim'
+            Plugin 'Shougo/neosnippet.vim'
+            Plugin 'Shougo/neosnippet-snippets'
+            Plugin 'honza/vim-snippets'
+        elseif count(g:m_vim_settings.plugin_groups, 'neocomplete')
+            Plugin 'Shougo/neocomplete.vim'
+            Plugin 'Shougo/neosnippet.vim'
+            Plugin 'Shougo/neosnippet-snippets'
+            Plugin 'honza/vim-snippets'
+        endif
+    " }
+
+    " Python {
+        if count(g:m_vim_settings.plugin_groups, 'python')
+            " Pick either python-mode or pyflakes & pydoc
+            Plugin 'klen/python-mode'
+            Plugin 'yssource/python.vim'
+            Plugin 'python_match.vim'
+            Plugin 'pythoncomplete'
+        endif
+    " }
+
+    " Javascript {
+        if count(g:m_vim_settings.plugin_groups, 'javascript')
+            Plugin 'elzr/vim-json'
+            Plugin 'groenewege/vim-less'
+            Plugin 'pangloss/vim-javascript'
+            Plugin 'briancollins/vim-jst'
+            Plugin 'kchmck/vim-coffee-script'
+        endif
+    " }
+
+    " HTML {
+        if count(g:m_vim_settings.plugin_groups, 'html')
+            Plugin 'amirh/HTML-AutoCloseTag'
+            Plugin 'hail2u/vim-css3-syntax'
+            Plugin 'gorodinskiy/vim-coloresque'
+            Plugin 'tpope/vim-haml'
+            Plugin 'mattn/emmet-vim'
+            Plugin 'groenewege/vim-less'
+            Plugin 'cakebaker/scss-syntax.vim'
+            Plugin 'ap/vim-css-color'
+            Plugin 'othree/html5.vim'
+            Plugin 'wavded/vim-stylus'
+            Plugin 'digitaltoad/vim-jade'
+            Plugin 'mattn/webapi-vim'
+            Plugin 'juvenn/mustache.vim'
+            Plugin 'gregsexton/MatchTag'
+            function! s:zen_html_tab()
+                let line = getline('.')
+                if match(line, '<.*>') < 0
+                    return "\<c-y>,"
+                endif
+                return "\<c-y>n"
+            endfunction
+            autocmd FileType xml,xsl,xslt,xsd,css,sass,scss,less,mustache imap <buffer><tab> <c-y>,
+            autocmd FileType html imap <buffer><expr><tab> <sid>zen_html_tab()
+        endif
+    " }
+
+    " PHP {
+        if count(g:m_vim_settings.plugin_groups, 'php')
+            Plugin 'spf13/PIV'
+            Plugin 'arnaud-lb/vim-php-namespace'
+            Plugin 'beyondwords/vim-twig'
+        endif
+    " }
+
+    " Scala {
+        if count(g:m_vim_settings.plugin_groups, 'scala')
+            Plugin 'derekwyatt/vim-scala'
+            Plugin 'derekwyatt/vim-sbt'
+            Plugin 'xptemplate'
+        endif
+    " }
+
+    " Haskell {
+        if count(g:m_vim_settings.plugin_groups, 'haskell')
+            Plugin 'travitch/hasksyn'
+            Plugin 'dag/vim2hs'
+            Plugin 'Twinside/vim-haskellConceal'
+            Plugin 'Twinside/vim-haskellFold'
+            Plugin 'lukerandall/haskellmode-vim'
+            Plugin 'eagletmt/neco-ghc'
+            Plugin 'eagletmt/ghcmod-vim'
+            Plugin 'Shougo/vimproc.vim'
+            Plugin 'adinapoli/cumino'
+            Plugin 'bitc/vim-hdevtools'
+        endif
+    " }
+
+    " Ruby {
+        if count(g:m_vim_settings.plugin_groups, 'ruby')
+            Plugin 'tpope/vim-rails'
+            let g:rubycomplete_buffer_loading = 1
+            "let g:rubycomplete_classes_in_global = 1
+            "let g:rubycomplete_rails = 1
+        endif
+    " }
+
+    " Puppet {
+        if count(g:m_vim_settings.plugin_groups, 'puppet')
+            Plugin 'rodjek/vim-puppet'
+        endif
+    " }
+
+    " Go Lang {
+        if count(g:m_vim_settings.plugin_groups, 'go')
+            "Plugin 'Blackrush/vim-gocode'
+            Plugin 'fatih/vim-go'
+        endif
+    " }
+
+    " Elixir {
+        if count(g:m_vim_settings.plugin_groups, 'elixir')
+            Plugin 'elixir-lang/vim-elixir'
+            Plugin 'carlosgaldino/elixir-snippets'
+            Plugin 'mattreduce/vim-mix'
+        endif
+    " }
+
+    " Misc {
+        if count(g:m_vim_settings.plugin_groups, 'misc')
+            Plugin 'rust-lang/rust.vim'
+            Plugin 'tpope/vim-markdown'
+            Plugin 'spf13/vim-preview'
+            Plugin 'tpope/vim-cucumber'
+            Plugin 'cespare/vim-toml'
+            Plugin 'quentindecock/vim-cucumber-align-pipes'
+            Plugin 'Puppet-Syntax-Highlighting'
+            " Toggling the display of the quickfix list and the location-list
+            Plugin 'Valloric/ListToggle'
+        endif
+    " }
+
+" }
+
+" Setup Bundle Support {
+    " All of your Plugins must be added before the following line
+    call vundle#end()            " required
+    filetype plugin indent on    " required
+" }
+
