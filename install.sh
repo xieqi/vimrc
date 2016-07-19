@@ -146,8 +146,8 @@ setup_vundle() {
     vim \
         -u "$1" \
         "+set nomore" \
-        "+BundleInstall!" \
-        "+BundleClean" \
+        "+PluginInstall!" \
+        "+PluginClean" \
         "+qall"
 
     export SHELL="$system_shell"
@@ -156,6 +156,13 @@ setup_vundle() {
     debug
 }
 
+setup_ycm() {
+    sudo apt-get install cmake
+    sudo apt-get install python-dev python3-dev
+    #sudo apt-get install libclang-3.8-dev
+    cd $HOME/.vim/bundle/YouCompleteMe
+    ./install.py --clang-completer
+}
 ############################ MAIN()
 variable_set "$HOME"
 program_must_exist "vim"
@@ -178,7 +185,9 @@ sync_repo       "$HOME/.vim/bundle/Vundle.vim" \
                 "master" \
                 "Vundle"
 
-setup_vundle    "$APP_PATH/.vimrc.bundles"
+setup_vundle    "$HOME/.vimrc"
+
+setup_ycm
 
 msg             "\nThanks for installing $app_name."
 msg             "© `date +%Y` http://github.com/xieqi/"

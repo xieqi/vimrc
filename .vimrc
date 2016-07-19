@@ -1020,14 +1020,14 @@ nnoremap <silent><leader>vfi :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
         if WINDOWS()
             let &t_Co = 256
             colorscheme desert
-            "colorscheme molokai
         else
             " use 256 colors when possible
             if &term[:4] == "linux" || &term[:4] == "xterm" || &term[:5] == 'screen' || &term[:3] == 'rxvt'
-            "if &term == 'linux' || &term == 'xterm' || &term == 'screen'
                 set t_Co=256            " Enable 256 colors to stop the CSApprox warning and make xterm vim shine
             endif
-            colorscheme molokai
+            if isdirectory(expand("~/.vim/bundle/molokai/"))
+                colorscheme molokai
+            endif
         endif
     endif
 
