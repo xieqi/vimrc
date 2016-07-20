@@ -66,6 +66,7 @@
         if count(g:m_vim_settings.plugin_groups, 'general')
             " Ack can be used as a replacement for 99% of the uses of grep
             Plugin 'mileszs/ack.vim'
+            Plugin 'dyng/ctrlsf.vim'
 
             " A tree explorer plugin
             Plugin 'scrooloose/nerdtree'

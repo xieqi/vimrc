@@ -168,6 +168,7 @@
 
     set autoread                         " Auto reload if file saved externally
     set shortmess=atI                   " Abbrev. of messages (avoids 'hit enter')
+    set cmdheight=2
     set viewoptions=folds,options,cursor,unix,slash " Better Unix / Windows compatibility
     set virtualedit=onemore             " Allow for cursor beyond last character
     set history=1000                    " Store a ton of history (default is 20)
@@ -328,13 +329,12 @@
     set ignorecase                  " Case insensitive search
     set smartcase                   " Case sensitive when uc present
 
-    if executable('ack')
-        set grepprg=ack\ --nogroup\ --column\ --smart-case\ --nocolor\ --follow\ $*
-        set grepformat=%f:%l:%c:%m
-    endif
 
     if executable('ag')
-        set grepprg=ag\ --nogroup\ --column\ --smart-case\ --nocolor\ --follow
+        set grepprg=ag\ --nogroup\ --smart-case\ --nocolor\ --follow
+        set grepformat=%f:%l:%c:%m
+    elseif executable('ack')
+        set grepprg=ack\ --nogroup\ --smart-case\ --nocolor\ --follow\ $*
         set grepformat=%f:%l:%c:%m
     endif
 
@@ -382,16 +382,6 @@ set wildignore+=*.aux,*.bbl,*.blg,*.toc,*.out,*.bak,*.mtc0,*.maf,*.mtc
     nnoremap <TAB> :bn<CR>
     nnoremap <S-TAB> :bp<CR>
 
-    noremap <M-1> :1bn<CR>
-    noremap <M-2> :2bn<CR>
-    noremap <M-3> :3bn<CR>
-    noremap <M-4> :4bn<CR>
-    noremap <M-5> :5bn<CR>
-    noremap <M-6> :6bn<CR>
-    noremap <M-7> :7bn<CR>
-    noremap <M-8> :8bn<CR>
-    noremap <M-9> :9bn<CR>
-
     " Tab moving
     "map <leader>tn :tabnew<cr>
     "map <leader>to :tabonly<cr>
@@ -404,15 +394,6 @@ set wildignore+=*.aux,*.bbl,*.blg,*.toc,*.out,*.bak,*.mtc0,*.maf,*.mtc
 
     nnoremap <M-h> gT
     nnoremap <M-l> gt
-    "map <M-1> 1gt
-    "map <M-2> 2gt
-    "map <M-3> 3gt
-    "map <M-4> 4gt
-    "map <M-5> 5gt
-    "map <M-6> 6gt
-    "map <M-7> 7gt
-    "map <M-8> 8gt
-    "map <M-9> 9gt
     imap <M-1> 1gt
     imap <M-2> 2gt
     imap <M-3> 3gt
@@ -734,6 +715,26 @@ nnoremap <silent><leader>vfi :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
         if isdirectory(expand("~/.vim/bundle/vim-airline"))
             let g:airline_powerline_fonts=1
             let g:airline#extensions#tabline#enabled = 1
+            let g:airline#extensions#tabline#show_tab_type = 0
+            let g:airline#extensions#tabline#buffer_idx_mode = 1
+            nmap <leader>1 <Plug>AirlineSelectTab1
+            nmap <leader>2 <Plug>AirlineSelectTab2
+            nmap <leader>3 <Plug>AirlineSelectTab3
+            nmap <leader>4 <Plug>AirlineSelectTab4
+            nmap <leader>5 <Plug>AirlineSelectTab5
+            nmap <leader>6 <Plug>AirlineSelectTab6
+            nmap <leader>7 <Plug>AirlineSelectTab7
+            nmap <leader>8 <Plug>AirlineSelectTab8
+            nmap <leader>9 <Plug>AirlineSelectTab9
+            nmap <M-1> <Plug>AirlineSelectTab1
+            nmap <M-2> <Plug>AirlineSelectTab2
+            nmap <M-3> <Plug>AirlineSelectTab3
+            nmap <M-4> <Plug>AirlineSelectTab4
+            nmap <M-5> <Plug>AirlineSelectTab5
+            nmap <M-6> <Plug>AirlineSelectTab6
+            nmap <M-7> <Plug>AirlineSelectTab7
+            nmap <M-8> <Plug>AirlineSelectTab8
+            nmap <M-9> <Plug>AirlineSelectTab9
         endif
         if isdirectory(expand("~/.vim/bundle/vim-airline-themes/"))
             if !exists('g:airline_theme')
@@ -781,7 +782,7 @@ nnoremap <silent><leader>vfi :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
             let g:ctrlp_working_path_mode = 'ra'
             let g:ctrlp_show_hidden = 1
             let g:ctrlp_use_caching = 1
-            let g:ctrlp_clear_cache_on_exit = 1
+            let g:ctrlp_clear_cache_on_exit = 0
             let g:ctrlp_cache_dir=s:get_cache_dir('ctrlp')
             " to be able to call CtrlP with default search text
             function! CtrlPWithSearchText(search_text, ctrlp_command_end)
@@ -799,28 +800,28 @@ nnoremap <silent><leader>vfi :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
             nmap <leader>cpf  :call CtrlPWithSearchText(expand('<cfile>'), '')<CR>
             " Ignore files on fuzzy finder
             let g:ctrlp_custom_ignore = {
-                        \ 'dir':  '\v[\/]\.(git|hg|svn|rvm)$',
-                        \ 'file': '\v\.(o|pyc|exe|so|dll|zip|rar|tar|tar.gz|DS_Store)$',
-                        \ }
+                \ 'dir':  '\v[\/]\.(git|hg|svn|rvm)$',
+                \ 'file': '\v\.(o|pyc|exe|so|dll|zip|rar|tar|tar.gz|DS_Store)$',
+            \ }
 
-            "if executable('ag')
-                "let s:ctrlp_fallback = 'ag %s --nocolor -l -g ""'
-            "elseif executable('ack-grep')
-                "let s:ctrlp_fallback = 'ack-grep %s --nocolor -f'
-            "elseif executable('ack')
-                "let s:ctrlp_fallback = 'ack %s --nocolor -f'
-            "elseif WINDOWS()
-                "let s:ctrlp_fallback = 'dir %s /-n /b /s /a-d'
-            "else
-                "let s:ctrlp_fallback = 'find %s -type f'
-            "endif
-            "let g:ctrlp_user_command = {
-                        "\ 'types': {
-                        "\ 1: ['.git', 'cd %s && git ls-files . --cached --exclude-standard --others'],
-                        "\ 2: ['.hg', 'hg --cwd %s locate -I .'],
-                        "\ },
-                        "\ 'fallback': s:ctrlp_fallback
-                        "\ }
+            if executable('ag')
+                let s:ctrlp_fallback = 'ag %s -l --nocolor --hidden -g ""'
+            elseif executable('ack-grep')
+                let s:ctrlp_fallback = 'ack-grep %s --nocolor -f'
+            elseif executable('ack')
+                let s:ctrlp_fallback = 'ack %s --nocolor -f'
+            elseif WINDOWS()
+                let s:ctrlp_fallback = 'dir %s /-n /b /s /a-d'
+            else
+                let s:ctrlp_fallback = 'find %s -type f'
+            endif
+            let g:ctrlp_user_command = {
+                \ 'types': {
+                    \ 1: ['.hg', 'hg --cwd %s locate -I .'],
+                \ },
+                \ 'fallback': s:ctrlp_fallback
+            \ }
+            "\ 2: ['.git', 'cd %s && git ls-files . --cached --exclude-standard --others'],
         endif
 
         if isdirectory(expand("~/.vim/bundle/ctrlp-funky"))
@@ -832,6 +833,12 @@ nnoremap <silent><leader>vfi :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
             " narrow the list down with a word under cursor
             nnoremap <leader>pf :execute 'CtrlPFunky ' . expand('<cword>')<Cr>
             nnoremap <leader>pF :CtrlPFunky<Cr>
+        endif
+    " }
+
+    " vim-multiple-cursors {
+        if isdirectory(expand("~/.vim/bundle/vim-multiple-cursors/"))
+
         endif
     " }
 
@@ -897,26 +904,37 @@ nnoremap <silent><leader>vfi :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
     " Ack {
         if isdirectory(expand("~/.vim/bundle/ack.vim"))
             if executable('ag')
-                let g:ackprg = 'ag --nogroup --nocolor --column --smart-case'
+                let g:ackprg = 'ag --nogroup --nocolor --numbers --smart-case --silent'
             elseif executable('ack-grep')
-                "let g:ackprg="ack-grep -H --nocolor --nogroup --column"
-                let g:ackprg="ack-grep -s -H --nocolor --nogroup"
+                let g:ackprg="ack-grep -H --nogroup --nocolor --smart-case -s"
             endif
+            "let g:ackhighlight = 1
             let g:ack_autoclose = 1
             "let g:ack_autofold_results = 1
-            noremap <leader>a :Ack!<SPACE>
-            noremap <silent><leader>kw :Ack! -k <cword><CR>
-            noremap <silent><leader>kW :Ack! -k -w <cword><CR>
-            noremap <silent><leader>kiw :Ack! -k -i <cword><CR>
-            noremap <silent><leader>kiW :Ack! -k -i -w <cword><CR>
-            noremap <silent><leader>kaw :Ack! <cword><CR>
-            noremap <silent><leader>kaW :Ack! -w <cword><CR>
-            noremap <silent><leader>kaiw :Ack! -i <cword><CR>
-            noremap <silent><leader>kaiW :Ack! -i -w <cword><CR>
-            noremap <silent><leader>kcw :Ack! <cword> %<CR>
-            noremap <silent><leader>kcW :Ack! -w <cword> %<CR>
-            noremap <silent><leader>kicw :Ack! -k -i <cword> %<CR>
-            noremap <silent><leader>kicW :Ack! -k -i -w <cword> %<CR>
+            nnoremap <leader>a :Ack!<SPACE>
+            nnoremap <silent><leader>kw :Ack! <cword><CR>
+            nnoremap <silent><leader>kW :Ack! -w <cword><CR>
+            nnoremap <silent><leader>kiw :Ack! -i <cword><CR>
+            nnoremap <silent><leader>kiW :Ack! -i -w <cword><CR>
+            nnoremap <silent><leader>ksw :Ack! -s <cword><CR>
+            nnoremap <silent><leader>ksW :Ack! -s -w <cword><CR>
+            nnoremap <silent><leader>kcw :Ack! <cword> %<CR>
+            nnoremap <silent><leader>kcW :Ack! -w <cword> %<CR>
+            vnoremap <silent><leader>kw y<Esc>:Ack! -w <c-r>0<CR>
+        endif
+    " }
+
+    " CtrlSF {
+        if isdirectory(expand("~/.vim/bundle/ctrlsf.vim"))
+            let g:ctrlsf_auto_close = 1
+            let g:ctrlsf_confirm_save=0
+            let g:ctrlsf_position = 'bottom'
+            let g:ctrlsf_default_root = 'project'
+            nnoremap <silent><leader>tag :CtrlSFToggle<CR>
+            inoremap <silent><leader>tag <ESC>:CtrlSFToggle<CR>
+            nmap  <leader>ag <Plug>CtrlSFPrompt
+            nmap <leader>gw <Plug>CtrlSFCwordExec
+            vmap <leader>gw <Plug>CtrlSFVwordExec
         endif
     " }
 
@@ -949,6 +967,7 @@ nnoremap <silent><leader>vfi :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
             let g:undotree_SetFocusWhenToggle=1
         endif
     " }
+
     " YouCompleteMe {
         if count(g:m_vim_settings.plugin_groups, 'youcompleteme')
             let g:ycm_complete_in_comments_and_strings=1
