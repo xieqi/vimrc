@@ -144,9 +144,6 @@
     endfunction
     noremap <leader>bg :call ToggleBG()<CR>
 
-    " if !has('gui')
-        "set term=$TERM          " Make arrow and other keys work
-    " endif
     filetype plugin indent on   " Automatically detect file types.
     syntax on                   " Syntax highlighting
     set mouse=a                 " Automatically enable mouse usage
@@ -167,8 +164,8 @@
     endif
 
     set autoread                         " Auto reload if file saved externally
-    set shortmess=atI                   " Abbrev. of messages (avoids 'hit enter')
-    set cmdheight=2
+    set shortmess=atTI                   " Abbrev. of messages (avoids 'hit enter')
+    "set cmdheight=2
     set viewoptions=folds,options,cursor,unix,slash " Better Unix / Windows compatibility
     set virtualedit=onemore             " Allow for cursor beyond last character
     set history=1000                    " Store a ton of history (default is 20)
@@ -279,7 +276,7 @@
     set nojoinspaces                " Prevents inserting two spaces after punctuation on a join (J)
     set splitright                  " Puts new vsplit windows to the right of the current
     set splitbelow                  " Puts new split windows to the bottom of the current
-    "set matchpairs+=<:>             " Match, to be used with %
+    set matchpairs+=<:>             " Match, to be used with %
     set pastetoggle=<F12>           " pastetoggle (sane indentation on pastes)
     "set comments=sl:/*,mb:*,elx:*/  " auto format comment blocks
     "autocmd FileType go autocmd BufWritePre <buffer> Fmt
@@ -328,7 +325,6 @@
     set hlsearch                    " Highlight search terms
     set ignorecase                  " Case insensitive search
     set smartcase                   " Case sensitive when uc present
-
 
     if executable('ag')
         set grepprg=ag\ --nogroup\ --smart-case\ --nocolor\ --follow
@@ -593,104 +589,62 @@ set wildignore+=*.aux,*.bbl,*.blg,*.toc,*.out,*.bak,*.mtc0,*.maf,*.mtc
     nmap <silent><leader>ffd :se ff=dos<CR>
     nmap <silent><leader>ffu :se ff=unix<CR>
 
-    " g<c-]> is jump to tag if there's only one matching tag, but show list of
-    " options when there is more than one definition
-    nnoremap <leader>g g<c-]>
-    noremap <c-]> g<c-]>
 
-" Set up cscope and ctag environment {
-" search for exuberant ctags
-let ctagsbins = []
-let ctagsbins += ['ctags']
-let ctagsbins += ['ctags.exe']
-let g:ctagsbin = ''
-for ctags in ctagsbins
-    if executable(ctags)
-        let g:ctagsbin = ctags
-        break
-    endif
-endfor
-unlet ctagsbins
+    " Set up cscope and ctag environment {
+        " use both cscope and ctag for 'ctrl-]', ':ta', and 'vim -t'
+        set cscopetag
+        " check cscope for definition of a symbol before checking ctags:
+        " set to 1 if you want the reverse search order.
+        set cscopetagorder=0
+        set cscopequickfix=c-,d-,e-,f-,g-,i-,s-,t-
 
-set csprg=cscope
-" use both cscope and ctag for 'ctrl-]', ':ta', and 'vim -t'
-set cscopetag
-" check cscope for definition of a symbol before checking ctags:
-" set to 1 if you want the reverse search order.
-set cscopetagorder=0
-set cscopequickfix=c-,d-,e-,f-,g-,i-,s-,t-
-
-function! ToggleCscopeCtags()
-    if g:ctagsbin == ''
-        echomsg 'No ctags found!'
-        return
-    endif
-    let ctagsbin = g:ctagsbin
-    let userdefs = tagbar#getusertypes()
-    for type in values(userdefs)
-        if has_key(type, 'deffile')
-            let ctagsbin .= ' --options=' . expand(type.deffile)
-        endif
-    endfor
-    "execute '!' . ctagsbin . ' -R'
-    if !filereadable("tags")
-        call system("ctags -R --sort=yes --c-kinds=+p --c++-kinds=+p --fields=+liaS --extra=+q .")
-    endif
-    if has("cscope")
-        if cscope_connection() == 1
-            cs kill -1
-            cclose
-            return
-        endif
-        set nocscopeverbose
-        " add any database in current directory
-        if filereadable("cscope.out")
-            cs add cscope.out
-            "copen
-        else
-            let msg="Create cscope.out here?\n".getcwd()
-            let result=confirm(msg,"&Yes\n&No",1,"Question")
-            if result==1
+        function! ToggleCscopeCtags()
+            call system("ctags -R --sort=yes --c-kinds=+p --c++-kinds=+p --fields=+liaS --extra=+q .")
+            if has("cscope")
+                set cscopeverbose
+                if cscope_connection() == 1
+                    cs kill -1
+                    cclose
+                    return
+                endif
                 call system("cscope -b -k -q -R")
                 cs add cscope.out
-                "copen
             endif
-        endif
-        set cscopeverbose
-    endif
-endfunction
-nnoremap <silent><C-F4> :call ToggleCscopeCtags()<CR>
-nnoremap <silent><leader>tcs :call ToggleCscopeCtags()<CR>
+        endfunction
+        nnoremap <silent><F5> :call ToggleCscopeCtags()<CR>
+        nnoremap <silent><leader>tcs :call ToggleCscopeCtags()<CR>
 
-" The following maps all invoke one of the following cscope search types:
-"   's'   symbol: find all references to the token under cursor
-"   'g'   global: find global definition(s) of the token under cursor
-"   'c'   calls:  find all calls to the function name under cursor
-"   't'   text:   find all instances of the text under cursor
-"   'e'   egrep:  egrep search for the word under cursor
-"   'f'   file:   open the filename under cursor
-"   'i'   includes: find files that include the filename under cursor
-"   'd'   called: find functions that function under cursor calls
-nnoremap <silent><leader>fs :cs find s <C-R>=expand("<cword>")<CR><CR>
-nnoremap <silent><leader>fg :cs find g <C-R>=expand("<cword>")<CR><CR>
-nnoremap <silent><leader>fd :cs find d <C-R>=expand("<cword>")<CR><CR>
-nnoremap <silent><leader>fc :cs find c <C-R>=expand("<cword>")<CR><CR>
-nnoremap <silent><leader>ft :cs find t <C-R>=expand("<cword>")<CR><CR>
-nnoremap <silent><leader>fe :cs find e <C-R>=expand("<cword>")<CR><CR>
-nnoremap <silent><leader>ff :cs find f <C-R>=expand("<cfile>")<CR><CR>
-nnoremap <silent><leader>fi :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-"nnoremap <leader>fu :cs find s
+        " g<c-]> is jump to tag if there's only one matching tag, but show list of
+        " options when there is more than one definition
+        nnoremap <leader>g <c-]>
+        "noremap <c-]> g<c-]>
+        
+        " s: Find this C symbol
+        nnoremap <silent><leader>fs :silent cs find s <C-R>=expand("<cword>")<CR><CR>
+        " g: Find this definition
+        nnoremap <silent><leader>fg :silent cs find g <C-R>=expand("<cword>")<CR><CR>
+        " d: Find functions called by this function
+        "nnoremap <silent><leader>fd :cs find d <C-R>=expand("<cword>")<CR><CR>
+        " c: Find functions calling this function
+        nnoremap <silent><leader>fd :cs find c <C-R>=expand("<cword>")<CR><CR>
+        " t: Find this text string
+        nnoremap <silent><leader>ft :cs find t <C-R>=expand("<cword>")<CR><CR>
+        " e: Find this egrep pattern
+        nnoremap <silent><leader>fe :cs find e <C-R>=expand("<cword>")<CR><CR>
+        " f: Find this file
+        nnoremap <silent><leader>ff :cs find f <C-R>=expand("<cfile>")<CR><CR>
+        " i: Find files #including this file
+        nnoremap <silent><leader>fi :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
 
-nnoremap <silent><leader>vfs :scs find s <C-R>=expand("<cword>")<CR><CR>
-nnoremap <silent><leader>vfg :scs find g <C-R>=expand("<cword>")<CR><CR>
-nnoremap <silent><leader>vfd :scs find d <C-R>=expand("<cword>")<CR><CR>
-nnoremap <silent><leader>vfc :scs find c <C-R>=expand("<cword>")<CR><CR>
-nnoremap <silent><leader>vft :scs find t <C-R>=expand("<cword>")<CR><CR>
-nnoremap <silent><leader>vfe :scs find e <C-R>=expand("<cword>")<CR><CR>
-nnoremap <silent><leader>vff :scs find f <C-R>=expand("<cfile>")<CR><CR>
-nnoremap <silent><leader>vfi :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-
-
+        nnoremap <silent><leader>vfs :scs find s <C-R>=expand("<cword>")<CR><CR>
+        nnoremap <silent><leader>vfg :scs find g <C-R>=expand("<cword>")<CR><CR>
+        nnoremap <silent><leader>vfd :scs find d <C-R>=expand("<cword>")<CR><CR>
+        nnoremap <silent><leader>vfc :scs find c <C-R>=expand("<cword>")<CR><CR>
+        nnoremap <silent><leader>vft :scs find t <C-R>=expand("<cword>")<CR><CR>
+        nnoremap <silent><leader>vfe :scs find e <C-R>=expand("<cword>")<CR><CR>
+        nnoremap <silent><leader>vff :scs find f <C-R>=expand("<cfile>")<CR><CR>
+        nnoremap <silent><leader>vfi :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+    " }
 
 " }
 
@@ -878,6 +832,13 @@ nnoremap <silent><leader>vfi :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
         endif
     " }
 
+    " ListToggle {
+        if isdirectory(expand("~/.vim/bundle/ListToggle"))
+            let g:lt_location_list_toggle_map = '<leader>l'
+            let g:lt_quickfix_list_toggle_map = '<leader>q'
+        endif
+    " }
+
     " Tagbar {
         if isdirectory(expand("~/.vim/bundle/tagbar"))
             nnoremap <silent><F4> :TagbarToggle<CR>
@@ -1005,7 +966,7 @@ nnoremap <silent><leader>vfi :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
             " When enabled, there can be too much visual noise
             " especially when splits are used.
             set completeopt-=preview
-            nnoremap <F5> :YcmForceCompileAndDiagnostics<CR>
+            "nnoremap <F5> :YcmForceCompileAndDiagnostics<CR>
             nnoremap <F12> :YcmCompleter GoToDefinition<CR>
             nnoremap <leader>jg :YcmCompleter GoTo<CR>
             nnoremap <leader>jd :YcmCompleter GoToDefinition<CR>

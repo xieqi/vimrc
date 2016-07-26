@@ -143,6 +143,10 @@
 
             " Simplify Doxygen documentation in C, C++, Python
             "Plugin 'DoxygenToolkit.vim'
+            
+            " Toggling the display of the quickfix list and the location-list
+            Plugin 'Valloric/ListToggle'
+
         endif
     " }
 
@@ -181,6 +185,10 @@
 
             " displays tags in a window, ordered by scope
             Plugin 'majutsushi/tagbar'
+
+            " Automated tag file generation and syntax highlight of tags in Vim
+            "Plugin 'xolox/vim-easytags'
+            "Plugin 'xolox/vim-misc'
 
             " Additional Vim syntax highlighting for C++ (including C++11/14)
             Plugin 'octol/vim-cpp-enhanced-highlight'
@@ -348,8 +356,6 @@
             Plugin 'cespare/vim-toml'
             Plugin 'quentindecock/vim-cucumber-align-pipes'
             Plugin 'Puppet-Syntax-Highlighting'
-            " Toggling the display of the quickfix list and the location-list
-            Plugin 'Valloric/ListToggle'
         endif
     " }
 
