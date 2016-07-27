@@ -100,8 +100,8 @@
             " Vim motions on speed
             Plugin 'easymotion/vim-easymotion'
 
-            "Plugin 'mbbill/undotree'
-            Plugin 'sjl/gundo.vim'
+            Plugin 'mbbill/undotree'
+            "Plugin 'sjl/gundo.vim'
 
             " visually displaying indent levels in code
             Plugin 'nathanaelkane/vim-indent-guides'
@@ -143,7 +143,7 @@
 
             " Simplify Doxygen documentation in C, C++, Python
             "Plugin 'DoxygenToolkit.vim'
-            
+
             " Toggling the display of the quickfix list and the location-list
             Plugin 'Valloric/ListToggle'
 
@@ -164,6 +164,9 @@
 
             " easy code formatting in Vim
             Plugin 'Chiel92/vim-autoformat'
+
+            " easy code formatting in Vim
+            Plugin 'rhysd/vim-clang-format'
 
             " Syntax checking
             Plugin 'scrooloose/syntastic'

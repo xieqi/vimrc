@@ -276,7 +276,7 @@
     set nojoinspaces                " Prevents inserting two spaces after punctuation on a join (J)
     set splitright                  " Puts new vsplit windows to the right of the current
     set splitbelow                  " Puts new split windows to the bottom of the current
-    set matchpairs+=<:>             " Match, to be used with %
+    "set matchpairs+=<:>             " Match, to be used with %
     set pastetoggle=<F12>           " pastetoggle (sane indentation on pastes)
     "set comments=sl:/*,mb:*,elx:*/  " auto format comment blocks
     "autocmd FileType go autocmd BufWritePre <buffer> Fmt
@@ -824,6 +824,18 @@ set wildignore+=*.aux,*.bbl,*.blg,*.toc,*.out,*.bak,*.mtc0,*.maf,*.mtc
         endif
     "}
 
+    " clang_format {
+        if isdirectory(expand("~/.vim/bundle/vim-clang-format"))
+            noremap <silent><Leader>cf :ClangFormat<CR>
+            let g:clang_format#style_options = {
+                        \ "AccessModifierOffset" : -4,
+                        \ "AllowShortIfStatementsOnASingleLine" : "true",
+                        \ "AlwaysBreakTemplateDeclarations" : "true",
+                        \ "Standard" : "C++11",
+                        \ "BreakBeforeBraces" : "Allman"}
+        endif
+    "}
+
     " sessionman {
         if isdirectory(expand("~/.vim/bundle/sessionman.vim"))
             set sessionoptions=blank,buffers,curdir,folds,tabpages,winsize
@@ -918,6 +930,15 @@ set wildignore+=*.aux,*.bbl,*.blg,*.toc,*.out,*.bak,*.mtc0,*.maf,*.mtc
             "let g:indentLine_char = '┊'
             nnoremap <silent><leader>til :IndentLinesToggle<CR>
             nnoremap <silent><leader>tls :LeadingSpaceToggle<CR>
+        endif
+    " }
+
+    " Undotree {
+        if isdirectory(expand("~/.vim/bundle/undotree"))
+            nnoremap <Leader>tut :UndotreeToggle<CR>
+            let g:undotree_WindowLayout=2
+            " If undotree is opened, it is likely one wants to interact with it.
+            let g:undotree_SetFocusWhenToggle=1
         endif
     " }
 
