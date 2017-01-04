@@ -108,7 +108,7 @@
     "call add(g:m_vim_settings.plugin_groups, 'javascript')
     "call add(g:m_vim_settings.plugin_groups, 'html')
     "call add(g:m_vim_settings.plugin_groups, 'php')
-    "call add(g:m_vim_settings.plugin_groups, 'scala')
+    call add(g:m_vim_settings.plugin_groups, 'scala')
     "call add(g:m_vim_settings.plugin_groups, 'haskell')
     "call add(g:m_vim_settings.plugin_groups, 'ruby')
     "call add(s:m_vim_settings.plugin_groups, 'go')
@@ -734,7 +734,7 @@ set wildignore+=*.aux,*.bbl,*.blg,*.toc,*.out,*.bak,*.mtc0,*.maf,*.mtc
             let g:ctrlp_by_filename = 1
             "let g:ctrlp_working_path_mode = 0
             let g:ctrlp_working_path_mode = 'ra'
-            let g:ctrlp_show_hidden = 1
+            "let g:ctrlp_show_hidden = 1
             let g:ctrlp_use_caching = 1
             let g:ctrlp_clear_cache_on_exit = 0
             let g:ctrlp_cache_dir=s:get_cache_dir('ctrlp')
@@ -759,7 +759,8 @@ set wildignore+=*.aux,*.bbl,*.blg,*.toc,*.out,*.bak,*.mtc0,*.maf,*.mtc
             \ }
 
             if executable('ag')
-                let s:ctrlp_fallback = 'ag %s -l --nocolor --hidden -g ""'
+                "let s:ctrlp_fallback = 'ag %s -l --nocolor --hidden -g ""'
+                let s:ctrlp_fallback = 'ag %s --nocolor -l -g ""'
             elseif executable('ack-grep')
                 let s:ctrlp_fallback = 'ack-grep %s --nocolor -f'
             elseif executable('ack')
@@ -769,15 +770,18 @@ set wildignore+=*.aux,*.bbl,*.blg,*.toc,*.out,*.bak,*.mtc0,*.maf,*.mtc
             else
                 let s:ctrlp_fallback = 'find %s -type f'
             endif
+            if exists("g:ctrlp_user_command")
+                unlet g:ctrlp_user_command
+            endif
             let g:ctrlp_user_command = {
-                \ 'types': {
-                    \ 1: ['.hg', 'hg --cwd %s locate -I .'],
-                \ },
-                \ 'fallback': s:ctrlp_fallback
-            \ }
-            "\ 2: ['.git', 'cd %s && git ls-files . --cached --exclude-standard --others'],
-        endif
+                        \ 'types': {
+                        \ 1: ['.git', 'cd %s && git ls-files . --cached --exclude-standard --others'],
+                        \ 2: ['.hg', 'hg --cwd %s locate -I .'],
+                        \ },
+                        \ 'fallback': s:ctrlp_fallback
+                        \ }
 
+        endif
         if isdirectory(expand("~/.vim/bundle/ctrlp-funky"))
             let g:ctrlp_extensions=['funky']
             let g:ctrlp_funky_syntax_highlight = 1
