@@ -158,7 +158,9 @@ setup_vundle() {
 
 setup_ycm() {
     sudo apt-get install cmake
+    sudo yum install cmake
     sudo apt-get install python-dev python3-dev
+    sudo yum install python-devel
     #sudo apt-get install libclang-3.8-dev
     cd $HOME/.vim/bundle/YouCompleteMe
     ./install.py --clang-completer
