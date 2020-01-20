@@ -214,7 +214,7 @@
 " Vim UI {
 
     set tabpagemax=15               " Only show 15 tabs
-    set showmode                    " Display the current mode
+    set noshowmode                    " Display the current mode
 
     set cursorline                  " Highlight current line
 
@@ -355,20 +355,25 @@ set wildignore+=*.aux,*.bbl,*.blg,*.toc,*.out,*.bak,*.mtc0,*.maf,*.mtc
 
 " Key (re)Mappings {
 
+    " Splits \ and - to open new splits (vertical and horizontal)
+    nnoremap <leader>\ <C-w>v<C-w>l
+    nnoremap <leader>- <C-w>s<C-w>j
+
     " Easier moving in tabs and windows
     " The lines conflict with the default digraph mapping of <C-K>
-    map <C-J> <C-W>j<C-W>_
-    map <C-K> <C-W>k<C-W>_
-    map <C-L> <C-W>l<C-W>_
-    map <C-H> <C-W>h<C-W>_
-    noremap <C-J>     <C-W>j
-    noremap <C-K>     <C-W>k
-    noremap <C-H>     <C-W>h
-    noremap <C-L>     <C-W>l
-    noremap <C-Down>  <C-W>j
-    noremap <C-Up>    <C-W>k
-    noremap <C-Left>  <C-W>h
-    noremap <C-Right> <C-W>l
+    " Navigation between splits maping handled by vim-tmux-navigator plugin 
+    "map <C-J> <C-W>j<C-W>_
+    "map <C-K> <C-W>k<C-W>_
+    "map <C-L> <C-W>l<C-W>_
+    "map <C-H> <C-W>h<C-W>_
+    "noremap <C-J>     <C-W>j
+    "noremap <C-K>     <C-W>k
+    "noremap <C-H>     <C-W>h
+    "noremap <C-L>     <C-W>l
+    "noremap <C-Down>  <C-W>j
+    "noremap <C-Up>    <C-W>k
+    "noremap <C-Left>  <C-W>h
+    "noremap <C-Right> <C-W>l
 
     " Buffer moving
     nnoremap <leader>j :bn<CR>
@@ -618,7 +623,7 @@ set wildignore+=*.aux,*.bbl,*.blg,*.toc,*.out,*.bak,*.mtc0,*.maf,*.mtc
         " options when there is more than one definition
         nnoremap <leader>g <c-]>
         "noremap <c-]> g<c-]>
-        
+
         " s: Find this C symbol
         nnoremap <silent><leader>fs :silent cs find s <C-R>=expand("<cword>")<CR><CR>
         " g: Find this definition
@@ -661,7 +666,8 @@ set wildignore+=*.aux,*.bbl,*.blg,*.toc,*.out,*.bak,*.mtc0,*.maf,*.mtc
 
     " molokai {
         if isdirectory(expand("~/.vim/bundle/molokai/"))
-            let g:molokai_original = 1
+            "let g:molokai_original = 1
+            let g:rehash256 = 1
         endif
     " }
 

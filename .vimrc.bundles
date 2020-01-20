@@ -53,17 +53,23 @@
     " color schemes {
         Plugin 'altercation/vim-colors-solarized'
         Plugin 'tomasr/molokai'
-        Plugin 'chriskempson/vim-tomorrow-theme'
-        Plugin 'chriskempson/base16-vim'
         Plugin 'sjl/badwolf'
+        Plugin 'arcticicestudio/nord-vim'
+        Plugin 'vim-scripts/peaksea'
         Plugin 'nanotech/jellybeans.vim'
         Plugin 'w0ng/vim-hybrid'
         Plugin 'zeis/vim-kolor'
         Plugin 'jnurmine/Zenburn'
+        "Plugin 'chriskempson/vim-tomorrow-theme'
+        "Plugin 'chriskempson/base16-vim'
     " }
 
     " General {
         if count(g:m_vim_settings.plugin_groups, 'general')
+            " Seamless navigation between tmux panes and vim splits
+            Plugin 'christoomey/vim-tmux-navigator'
+            Plugin 'christoomey/vim-system-copy'
+
             " Ack can be used as a replacement for 99% of the uses of grep
             Plugin 'mileszs/ack.vim'
             Plugin 'dyng/ctrlsf.vim'
