@@ -102,15 +102,10 @@
     call add(g:m_vim_settings.plugin_groups, 'programming')
     call add(g:m_vim_settings.plugin_groups, 'scm')
     call add(g:m_vim_settings.plugin_groups, 'youcompleteme')
-    "call add(g:m_vim_settings.plugin_groups, 'neocomplcache')
-    "call add(g:m_vim_settings.plugin_groups, 'neocomplete')
-    "call add(g:m_vim_settings.plugin_groups, 'python')
-    "call add(g:m_vim_settings.plugin_groups, 'javascript')
+    call add(g:m_vim_settings.plugin_groups, 'python')
+    call add(g:m_vim_settings.plugin_groups, 'javascript')
     "call add(g:m_vim_settings.plugin_groups, 'html')
-    "call add(g:m_vim_settings.plugin_groups, 'php')
     call add(g:m_vim_settings.plugin_groups, 'scala')
-    "call add(g:m_vim_settings.plugin_groups, 'haskell')
-    "call add(g:m_vim_settings.plugin_groups, 'ruby')
     "call add(s:m_vim_settings.plugin_groups, 'go')
     "call add(g:m_vim_settings.plugin_groups, 'misc')
 
@@ -146,7 +141,7 @@
 
     filetype plugin indent on   " Automatically detect file types.
     syntax on                   " Syntax highlighting
-    set mouse=a                 " Automatically enable mouse usage
+    "set mouse=a                 " Automatically enable mouse usage
     set mousehide               " Hide the mouse cursor while typing
 
     if has('clipboard')
@@ -165,11 +160,9 @@
 
     set autoread                         " Auto reload if file saved externally
     set shortmess=atTI                   " Abbrev. of messages (avoids 'hit enter')
-    "set cmdheight=2
     set viewoptions=folds,options,cursor,unix,slash " Better Unix / Windows compatibility
     set virtualedit=onemore             " Allow for cursor beyond last character
     set history=1000                    " Store a ton of history (default is 20)
-    "set spell                           " Spell checking on
     set hidden                          " Allow buffer switching without saving
     set novisualbell                    " don't beep
     set noerrorbells                    " don't beep
@@ -194,19 +187,19 @@
     augroup END
 
     " Setting up the directories {
-        set backup                  " Backups are nice ...
-        set noswapfile              " swap files
-        if has('persistent_undo')
-            set undofile                " So is persistent undo ...
-            set undolevels=1000         " Maximum number of changes that can be undone
-            set undoreload=10000        " Maximum number lines to save for undo on a buffer reload
-        endif
+    set backup                  " Backups are nice ...
+    set noswapfile              " swap files
+    if has('persistent_undo')
+        set undofile                " So is persistent undo ...
+        set undolevels=1000         " Maximum number of changes that can be undone
+        set undoreload=10000        " Maximum number lines to save for undo on a buffer reload
+    endif
 
-        " Add exclusions to mkview and loadview
-        " eg: *.*, svn-commit.tmp
-        let g:skipview_files = [
-                    \ '\[example pattern\]'
-                    \ ]
+    " Add exclusions to mkview and loadview
+    " eg: *.*, svn-commit.tmp
+    let g:skipview_files = [
+                \ '\[example pattern\]'
+                \ ]
     " }
 
 " }
@@ -214,7 +207,7 @@
 " Vim UI {
 
     set tabpagemax=15               " Only show 15 tabs
-    set noshowmode                    " Display the current mode
+    set noshowmode                  " Display the current mode
 
     set cursorline                  " Highlight current line
 
@@ -233,14 +226,6 @@
 
     if has('statusline')
         set laststatus=2
-
-        " Broken down into easily includeable segments
-        "set statusline=%<%f\                     " Filename
-        "set statusline+=%w%h%m%r                 " Options
-        "set statusline+=%{fugitive#statusline()} " Git Hotness
-        "set statusline+=\ [%{&ff}/%Y]            " Filetype
-        "set statusline+=\ [%{getcwd()}]          " Current dir
-        "set statusline+=%=%-14.(%l,%c%V%)\ %p%%  " Right aligned file nav info
     endif
 
     set backspace=indent,eol,start  " Allow backspacing everything in insert mode
@@ -289,12 +274,6 @@
     " preceding line best in a plugin but here for now.
 
     autocmd BufNewFile,BufRead *.coffee set filetype=coffee
-
-    " Workaround vim-commentary for Haskell
-    autocmd FileType haskell setlocal commentstring=--\ %s
-    " Workaround broken colour highlighting in Haskell
-    autocmd FileType haskell,rust setlocal nospell
-
 " }
 
 " Fold Setting {
@@ -361,7 +340,7 @@ set wildignore+=*.aux,*.bbl,*.blg,*.toc,*.out,*.bak,*.mtc0,*.maf,*.mtc
 
     " Easier moving in tabs and windows
     " The lines conflict with the default digraph mapping of <C-K>
-    " Navigation between splits maping handled by vim-tmux-navigator plugin 
+    " Navigation between splits maping handled by vim-tmux-navigator plugin
     "map <C-J> <C-W>j<C-W>_
     "map <C-K> <C-W>k<C-W>_
     "map <C-L> <C-W>l<C-W>_
@@ -432,22 +411,22 @@ set wildignore+=*.aux,*.bbl,*.blg,*.toc,*.out,*.bak,*.mtc0,*.maf,*.mtc
     endfunction
 
     " Map g* keys in Normal, Operator-pending, and Visual+select
-    noremap $ :call WrapRelativeMotion("$")<CR>
-    noremap <End> :call WrapRelativeMotion("$")<CR>
-    noremap 0 :call WrapRelativeMotion("0")<CR>
-    noremap <Home> :call WrapRelativeMotion("0")<CR>
-    noremap ^ :call WrapRelativeMotion("^")<CR>
+    noremap <silent>$ :call WrapRelativeMotion("$")<CR>
+    noremap <silent><End> :call WrapRelativeMotion("$")<CR>
+    noremap <silent>0 :call WrapRelativeMotion("0")<CR>
+    noremap <silent><Home> :call WrapRelativeMotion("0")<CR>
+    noremap <silent>^ :call WrapRelativeMotion("^")<CR>
     " Overwrite the operator pending $/<End> mappings from above
     " to force inclusive motion with :execute normal!
     onoremap $ v:call WrapRelativeMotion("$")<CR>
     onoremap <End> v:call WrapRelativeMotion("$")<CR>
     " Overwrite the Visual+select mode mappings from above
     " to ensure the correct vis_sel flag is passed to function
-    vnoremap $ :<C-U>call WrapRelativeMotion("$", 1)<CR>
-    vnoremap <End> :<C-U>call WrapRelativeMotion("$", 1)<CR>
-    vnoremap 0 :<C-U>call WrapRelativeMotion("0", 1)<CR>
-    vnoremap <Home> :<C-U>call WrapRelativeMotion("0", 1)<CR>
-    vnoremap ^ :<C-U>call WrapRelativeMotion("^", 1)<CR>
+    vnoremap <silent>$ :<C-U>call WrapRelativeMotion("$", 1)<CR>
+    vnoremap <silent><End> :<C-U>call WrapRelativeMotion("$", 1)<CR>
+    vnoremap <silent>0 :<C-U>call WrapRelativeMotion("0", 1)<CR>
+    vnoremap <silent><Home> :<C-U>call WrapRelativeMotion("0", 1)<CR>
+    vnoremap <silent>^ :<C-U>call WrapRelativeMotion("^", 1)<CR>
 
     " Go to home and end using capitalized directions
     noremap H ^
@@ -457,21 +436,20 @@ set wildignore+=*.aux,*.bbl,*.blg,*.toc,*.out,*.bak,*.mtc0,*.maf,*.mtc
     nnoremap Y y$
 
     " Code folding options
-    nmap <leader>f0 :set foldlevel=0<CR>
-    nmap <leader>f1 :set foldlevel=1<CR>
-    nmap <leader>f2 :set foldlevel=2<CR>
-    nmap <leader>f3 :set foldlevel=3<CR>
-    nmap <leader>f4 :set foldlevel=4<CR>
-    nmap <leader>f5 :set foldlevel=5<CR>
-    nmap <leader>f6 :set foldlevel=6<CR>
-    nmap <leader>f7 :set foldlevel=7<CR>
-    nmap <leader>f8 :set foldlevel=8<CR>
-    nmap <leader>f9 :set foldlevel=9<CR>
+    nmap <silent><leader>f0 :set foldlevel=0<CR>
+    nmap <silent><leader>f1 :set foldlevel=1<CR>
+    nmap <silent><leader>f2 :set foldlevel=2<CR>
+    nmap <silent><leader>f3 :set foldlevel=3<CR>
+    nmap <silent><leader>f4 :set foldlevel=4<CR>
+    nmap <silent><leader>f5 :set foldlevel=5<CR>
+    nmap <silent><leader>f6 :set foldlevel=6<CR>
+    nmap <silent><leader>f7 :set foldlevel=7<CR>
+    nmap <silent><leader>f8 :set foldlevel=8<CR>
+    nmap <silent><leader>f9 :set foldlevel=9<CR>
     nnoremap <silent><leader>z @=((foldclosed(line('.')) < 0) ? 'zc' : 'zo')<CR>
 
     " Toggle search highlighting
     nmap <silent> <leader>/ :nohlsearch<CR>
-    "nmap <silent> <leader>/ :set invhlsearch<CR>
 
     " Find merge conflict markers
     map <leader>fc /\v^[<\|=>]{7}( .*\|$)<CR>
@@ -621,7 +599,7 @@ set wildignore+=*.aux,*.bbl,*.blg,*.toc,*.out,*.bak,*.mtc0,*.maf,*.mtc
 
         " g<c-]> is jump to tag if there's only one matching tag, but show list of
         " options when there is more than one definition
-        nnoremap <leader>g <c-]>
+        nnoremap <leader>jg <c-]>
         "noremap <c-]> g<c-]>
 
         " s: Find this C symbol
@@ -668,6 +646,26 @@ set wildignore+=*.aux,*.bbl,*.blg,*.toc,*.out,*.bak,*.mtc0,*.maf,*.mtc
         if isdirectory(expand("~/.vim/bundle/molokai/"))
             "let g:molokai_original = 1
             let g:rehash256 = 1
+        endif
+    " }
+
+    " resize {
+        if isdirectory(expand("~/.vim/bundle/resize.vim/"))
+            let g:resize_disable_mappings=1
+            nnoremap <silent> <S-J> :ResizeUp<Cr>
+            nnoremap <silent> <S-K> :ResizeDown<Cr>
+            nnoremap <silent> <S-H> :ResizeLeft<Cr>
+            nnoremap <silent> <S-L> :ResizeRight<Cr>
+            nnoremap <silent> <S-Up> :ResizeUp<Cr>
+            nnoremap <silent> <S-Down> :ResizeDown<Cr>
+            nnoremap <silent> <S-Left> :ResizeLeft<Cr>
+            nnoremap <silent> <S-Right> :ResizeRight<Cr>
+        endif
+    " }
+
+    " vim-run-interactive {
+        if isdirectory(expand("~/.vim/bundle/vim-run-interactive"))
+            nnoremap <leader>ri :RunInInteractiveShell<space>
         endif
     " }
 
@@ -738,7 +736,6 @@ set wildignore+=*.aux,*.bbl,*.blg,*.toc,*.out,*.bak,*.mtc0,*.maf,*.mtc
             let g:ctrlp_map = '<leader>p'
             let g:ctrlp_cmd = 'CtrlP'
             let g:ctrlp_by_filename = 1
-            "let g:ctrlp_working_path_mode = 0
             let g:ctrlp_working_path_mode = 'ra'
             "let g:ctrlp_show_hidden = 1
             let g:ctrlp_use_caching = 1
@@ -765,7 +762,6 @@ set wildignore+=*.aux,*.bbl,*.blg,*.toc,*.out,*.bak,*.mtc0,*.maf,*.mtc
             \ }
 
             if executable('ag')
-                "let s:ctrlp_fallback = 'ag %s -l --nocolor --hidden -g ""'
                 let s:ctrlp_fallback = 'ag %s --nocolor -l -g ""'
             elseif executable('ack-grep')
                 let s:ctrlp_fallback = 'ack-grep %s --nocolor -f'
@@ -809,34 +805,13 @@ set wildignore+=*.aux,*.bbl,*.blg,*.toc,*.out,*.bak,*.mtc0,*.maf,*.mtc
     " Rainbow {
         if isdirectory(expand("~/.vim/bundle/rainbow/"))
             let g:rainbow_active = 1 "0 if you want to enable it later via :RainbowToggle
-            let g:rainbow_conf = {
-                        \   'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick'],
-                        \   'ctermfgs': ['lightblue', 'lightyellow', 'lightcyan', 'lightmagenta'],
-                        \   'operators': '_,_',
-                        \   'parentheses': ['start=/(/ end=/)/ fold', 'start=/\[/ end=/\]/ fold', 'start=/{/ end=/}/ fold'],
-                        \   'separately': {
-                        \       '*': {},
-                        \       'tex': {
-                        \           'parentheses': ['start=/(/ end=/)/', 'start=/\[/ end=/\]/'],
-                        \       },
-                        \       'lisp': {
-                        \           'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick', 'darkorchid3'],
-                        \       },
-                        \       'vim': {
-                        \           'parentheses': ['start=/(/ end=/)/', 'start=/\[/ end=/\]/', 'start=/{/ end=/}/ fold', 'start=/(/ end=/)/ containedin=vimFuncBody', 'start=/\[/ end=/\]/ containedin=vimFuncBody', 'start=/{/ end=/}/ fold containedin=vimFuncBody'],
-                        \       },
-                        \       'html': {
-                        \           'parentheses': ['start=/\v\<((area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr)[ >])@!\z([-_:a-zA-Z0-9]+)(\s+[-_:a-zA-Z0-9]+(\=("[^"]*"|'."'".'[^'."'".']*'."'".'|[^ '."'".'"><=`]*))?)*\>/ end=#</\z1># fold'],
-                        \       },
-                        \       'css': 0,
-                        \   }
-                        \}
         endif
     "}
 
     " clang_format {
         if isdirectory(expand("~/.vim/bundle/vim-clang-format"))
-            noremap <silent><Leader>cf :ClangFormat<CR>
+            nnoremap <buffer><Leader>cf :<C-u>ClangFormat<CR>
+            vnoremap <buffer><Leader>cf :ClangFormat<CR>
             let g:clang_format#style_options = {
                         \ "AccessModifierOffset" : -4,
                         \ "AllowShortIfStatementsOnASingleLine" : "true",
@@ -866,6 +841,22 @@ set wildignore+=*.aux,*.bbl,*.blg,*.toc,*.out,*.bak,*.mtc0,*.maf,*.mtc
             nnoremap <silent><F4> :TagbarToggle<CR>
             nnoremap <silent><leader>ttb :TagbarToggle<CR>
             let g:tagbar_autofocus=1
+            let g:tagbar_type_javascript = {
+                  \ 'ctagstype': 'javascript',
+                  \ 'kinds': [
+                  \ 'a:arrays',
+                  \ 'p:properties',
+                  \ 't:tags',
+                  \ 'o:objects',
+                  \ 'g:generator functions',
+                  \ 'f:functions',
+                  \ 'c:constructors/classes',
+                  \ 'm:methods',
+                  \ 'v:variables',
+                  \ 'i:imports',
+                  \ 'e:exports',
+                  \ 's:styled components'
+                  \ ]}
 
             " If using go please install the gotags program using the following
             " go install github.com/jstemmer/gotags
@@ -891,19 +882,25 @@ set wildignore+=*.aux,*.bbl,*.blg,*.toc,*.out,*.bak,*.mtc0,*.maf,*.mtc
             elseif executable('ack-grep')
                 let g:ackprg="ack-grep -H --nogroup --nocolor --smart-case -s"
             endif
-            "let g:ackhighlight = 1
+            let g:ackhighlight = 1
             let g:ack_autoclose = 1
             "let g:ack_autofold_results = 1
             nnoremap <leader>a :Ack!<SPACE>
-            nnoremap <silent><leader>kw :Ack! <cword><CR>
-            nnoremap <silent><leader>kW :Ack! -w <cword><CR>
-            nnoremap <silent><leader>kiw :Ack! -i <cword><CR>
-            nnoremap <silent><leader>kiW :Ack! -i -w <cword><CR>
-            nnoremap <silent><leader>ksw :Ack! -s <cword><CR>
-            nnoremap <silent><leader>ksW :Ack! -s -w <cword><CR>
-            nnoremap <silent><leader>kcw :Ack! <cword> %<CR>
-            nnoremap <silent><leader>kcW :Ack! -w <cword> %<CR>
-            vnoremap <silent><leader>kw y<Esc>:Ack! -w <c-r>0<CR>
+            nnoremap <silent><leader>fw :Ack! <cword><CR>
+            nnoremap <silent><leader>fW :Ack! -w <cword><CR>
+            nnoremap <silent><leader>faw :Ack! --hidden <cword><CR>
+            nnoremap <silent><leader>faW :Ack! -w --hidden <cword><CR>
+            nnoremap <silent><leader>fiw :Ack! -i <cword><CR>
+            nnoremap <silent><leader>fiW :Ack! -i -w <cword><CR>
+            nnoremap <silent><leader>fiaw :Ack! -i --hidden <cword><CR>
+            nnoremap <silent><leader>fiaW :Ack! -i -w --hidden <cword><CR>
+            nnoremap <silent><leader>fsw :Ack! -s <cword><CR>
+            nnoremap <silent><leader>fsW :Ack! -s -w <cword><CR>
+            nnoremap <silent><leader>fsaw :Ack! -s --hidden <cword><CR>
+            nnoremap <silent><leader>fsaW :Ack! -s -w --hidden <cword><CR>
+            nnoremap <silent><leader>fcw :Ack! <cword> %<CR>
+            nnoremap <silent><leader>fcW :Ack! -w <cword> %<CR>
+            vnoremap <silent><leader>fw y<Esc>:Ack! -w <c-r>0<CR>
         endif
     " }
 
@@ -945,16 +942,8 @@ set wildignore+=*.aux,*.bbl,*.blg,*.toc,*.out,*.bak,*.mtc0,*.maf,*.mtc
 
     " Undotree {
         if isdirectory(expand("~/.vim/bundle/undotree"))
-            nnoremap <Leader>tut :UndotreeToggle<CR>
+            nnoremap <silent><Leader>tut :UndotreeToggle<CR>
             let g:undotree_WindowLayout=2
-            " If undotree is opened, it is likely one wants to interact with it.
-            let g:undotree_SetFocusWhenToggle=1
-        endif
-    " }
-
-    " Gundo {
-        if isdirectory(expand("~/.vim/bundle/gundo.vim/"))
-            nnoremap <Leader>tgu :GundoToggle<CR>
             " If undotree is opened, it is likely one wants to interact with it.
             let g:undotree_SetFocusWhenToggle=1
         endif
@@ -962,31 +951,22 @@ set wildignore+=*.aux,*.bbl,*.blg,*.toc,*.out,*.bak,*.mtc0,*.maf,*.mtc
 
     " YouCompleteMe {
         if count(g:m_vim_settings.plugin_groups, 'youcompleteme')
-            let g:ycm_complete_in_comments_and_strings=1
+            let g:ycm_complete_in_comments = 1
             let g:ycm_collect_identifiers_from_comments_and_strings = 1
             let g:ycm_collect_identifiers_from_tags_files = 1
-            let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
+            let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/YouCompleteMe/third_party/ycmd/.ycm_extra_conf.py'
             let g:ycm_confirm_extra_conf = 0
             " remap Ultisnips for compatibility for YCM
-            "let g:UltiSnipsExpandTrigger = '<C-j>'
-            "let g:UltiSnipsJumpForwardTrigger = '<C-j>'
-            "let g:UltiSnipsJumpBackwardTrigger = '<C-k>'
+            let g:UltiSnipsExpandTrigger = '<C-b>'
+            let g:UltiSnipsJumpForwardTrigger = '<C-j>'
+            let g:UltiSnipsJumpBackwardTrigger = '<C-k>'
 
             " Enable omni completion.
             autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
             autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-            autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-            autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+            "autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+            "autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
             autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
-            autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
-            autocmd FileType haskell setlocal omnifunc=necoghc#omnifunc
-
-            " Haskell post write lint and check with ghcmod
-            " $ `cabal install ghcmod` if missing and ensure
-            " ~/.cabal/bin is in your $PATH.
-            if !executable("ghcmod")
-                autocmd BufWritePost *.hs GhcModCheckAndLintAsync
-            endif
 
             " For snippet_complete marker.
             if has('conceal')
@@ -997,13 +977,51 @@ set wildignore+=*.aux,*.bbl,*.blg,*.toc,*.out,*.bak,*.mtc0,*.maf,*.mtc
             " When enabled, there can be too much visual noise
             " especially when splits are used.
             set completeopt-=preview
-            "nnoremap <F5> :YcmForceCompileAndDiagnostics<CR>
-            nnoremap <F12> :YcmCompleter GoToDefinition<CR>
-            nnoremap <leader>jg :YcmCompleter GoTo<CR>
-            nnoremap <leader>jd :YcmCompleter GoToDefinition<CR>
-            nnoremap <leader>ji :YcmCompleter GoToInclude<CR>
-            nnoremap <leader>jt :YcmCompleter GetType<CR>
-            nnoremap <leader>jr :YcmCompleter GoToReferences<CR>
+            nnoremap <silent><F12> :YcmCompleter GoTo<CR>
+            nnoremap <silent><leader>g :YcmCompleter GoTo<CR>
+            nnoremap <silent><leader>gd :YcmCompleter GoToImplementation<CR>
+            nnoremap <silent><leader>gi :YcmCompleter GoToInclude<CR>
+            nnoremap <silent><leader>gt :YcmCompleter GetType<CR>
+            nnoremap <silent><leader>gr :YcmCompleter GoToReferences<CR>
+        endif
+    " }
+
+    " Ultisnips {
+        if count(g:m_vim_settings.plugin_groups, 'ultisnips')
+            let g:UltiSnipsExpandTrigger       ="<c-tab>"
+            let g:UltiSnipsJumpForwardTrigger  = "<tab>"
+            let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
+
+            " Enable tabbing through list of results
+            function! g:UltiSnips_Complete()
+                call UltiSnips#ExpandSnippet()
+                if g:ulti_expand_res == 0
+                    if pumvisible()
+                        return "\<C-n>"
+                    else
+                        call UltiSnips#JumpForwards()
+                        if g:ulti_jump_forwards_res == 0
+                            return "\<TAB>"
+                        endif
+                    endif
+                endif
+                return ""
+            endfunction
+
+            au InsertEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <C-R>=g:UltiSnips_Complete()<cr>"
+
+            " Expand snippet or return
+            let g:ulti_expand_res = 0
+            function! Ulti_ExpandOrEnter()
+                call UltiSnips#ExpandSnippet()
+                if g:ulti_expand_res
+                    return ''
+                else
+                    return "\<return>"
+            endfunction
+
+            " Set <space> as primary trigger
+            inoremap <return> <C-R>=Ulti_ExpandOrEnter()<CR>
         endif
     " }
 

@@ -38,7 +38,6 @@
         " The next three lines ensure that the ~/.vim/bundle/ system works
         filetype off
         set rtp+=~/.vim/bundle/Vundle.vim
-        "call vundle#rc()
         call vundle#begin()
     " }
 
@@ -54,21 +53,26 @@
         Plugin 'altercation/vim-colors-solarized'
         Plugin 'tomasr/molokai'
         Plugin 'sjl/badwolf'
-        Plugin 'arcticicestudio/nord-vim'
-        Plugin 'vim-scripts/peaksea'
+        Plugin 'chriskempson/base16-vim'
         Plugin 'nanotech/jellybeans.vim'
-        Plugin 'w0ng/vim-hybrid'
         Plugin 'zeis/vim-kolor'
-        Plugin 'jnurmine/Zenburn'
-        "Plugin 'chriskempson/vim-tomorrow-theme'
-        "Plugin 'chriskempson/base16-vim'
+        Plugin 'w0ng/vim-hybrid'
+        Plugin 'arcticicestudio/nord-vim'
     " }
 
     " General {
         if count(g:m_vim_settings.plugin_groups, 'general')
             " Seamless navigation between tmux panes and vim splits
             Plugin 'christoomey/vim-tmux-navigator'
+
+            " Resize a vertical or horizontal split screen
+            Plugin 'ahonn/resize.vim'
+
+            " Copying to the system clipboard with text-objects and motions
             Plugin 'christoomey/vim-system-copy'
+
+            " Run shell commands in an interactive shell
+            Plugin 'christoomey/vim-run-interactive'
 
             " Ack can be used as a replacement for 99% of the uses of grep
             Plugin 'mileszs/ack.vim'
@@ -85,7 +89,6 @@
 
             " Fuzzy file, buffer, mru, tag, etc finder
             Plugin 'ctrlpvim/ctrlp.vim'
-
             " Navigate and jump to function defs
             Plugin 'tacahiroy/ctrlp-funky'
 
@@ -135,9 +138,6 @@
             " Buffer Explorer / Browser
             Plugin 'jlanzarotta/bufexplorer'
 
-            " Elegant buffer explorer
-            "Plugin 'techlivezheng/vim-plugin-minibufexpl'
-
             " shows 'Nth match out of M' at every search
             Plugin 'henrik/vim-indexed-search'
 
@@ -169,22 +169,16 @@
         if count(g:m_vim_settings.plugin_groups, 'programming')
 
             " easy code formatting in Vim
-            Plugin 'Chiel92/vim-autoformat'
-
-            " easy code formatting in Vim
             Plugin 'rhysd/vim-clang-format'
 
-            " Syntax checking
-            Plugin 'scrooloose/syntastic'
+            " easy code formatting in Vim
+            "Plugin 'Chiel92/vim-autoformat'
 
-            " An extensible & universal comment vim-plugin
-            "Plugin 'tomtom/tcomment_vim'
+            " Syntax checking
+            "Plugin 'vim-syntastic/syntastic'
 
             " intensely orgasmic commenting
-            Plugin 'scrooloose/nerdcommenter'
-
-            " Comment stuff out
-            "Plugin 'tpope/vim-commentary'
+            Plugin 'preservim/nerdcommenter'
 
             " text filtering and alignment
             Plugin 'godlygeek/tabular'
@@ -222,28 +216,13 @@
     " }
 
     " Snippets & AutoComplete {
-        if count(g:m_vim_settings.plugin_groups, 'snipmate')
-            Plugin 'garbas/vim-snipmate'
-            Plugin 'honza/vim-snippets'
-            " Source support_function.vim to support vim-snippets.
-            if filereadable(expand("~/.vim/bundle/vim-snippets/snippets/support_functions.vim"))
-                source ~/.vim/bundle/vim-snippets/snippets/support_functions.vim
-            endif
-        elseif count(g:m_vim_settings.plugin_groups, 'youcompleteme')
-            Plugin 'Valloric/YouCompleteMe'
-            Plugin 'rdnetto/YCM-Generator'
+        if count(g:m_vim_settings.plugin_groups, 'youcompleteme')
+            Plugin 'ycm-core/YouCompleteMe'
             Plugin 'SirVer/ultisnips'
             Plugin 'honza/vim-snippets'
-        elseif count(g:m_vim_settings.plugin_groups, 'neocomplcache')
-            Plugin 'Shougo/neocomplcache.vim'
-            Plugin 'Shougo/neosnippet.vim'
-            Plugin 'Shougo/neosnippet-snippets'
-            Plugin 'honza/vim-snippets'
-        elseif count(g:m_vim_settings.plugin_groups, 'neocomplete')
-            Plugin 'Shougo/neocomplete.vim'
-            Plugin 'Shougo/neosnippet.vim'
-            Plugin 'Shougo/neosnippet-snippets'
-            Plugin 'honza/vim-snippets'
+            Plugin 'rdnetto/YCM-Generator'
+            "Code snippets engine for Vim
+            "Plugin 'drmingdrmer/xptemplate'
         endif
     " }
 
@@ -254,11 +233,13 @@
             Plugin 'yssource/python.vim'
             Plugin 'python_match.vim'
             Plugin 'pythoncomplete'
+            "Plugin 'davidhalter/jedi-vim'
         endif
     " }
 
     " Javascript {
         if count(g:m_vim_settings.plugin_groups, 'javascript')
+            Plugin 'ternjs/tern_for_vim'
             Plugin 'elzr/vim-json'
             Plugin 'groenewege/vim-less'
             Plugin 'pangloss/vim-javascript'
@@ -295,49 +276,10 @@
         endif
     " }
 
-    " PHP {
-        if count(g:m_vim_settings.plugin_groups, 'php')
-            Plugin 'spf13/PIV'
-            Plugin 'arnaud-lb/vim-php-namespace'
-            Plugin 'beyondwords/vim-twig'
-        endif
-    " }
-
     " Scala {
         if count(g:m_vim_settings.plugin_groups, 'scala')
             Plugin 'derekwyatt/vim-scala'
             Plugin 'derekwyatt/vim-sbt'
-            Plugin 'xptemplate'
-        endif
-    " }
-
-    " Haskell {
-        if count(g:m_vim_settings.plugin_groups, 'haskell')
-            Plugin 'travitch/hasksyn'
-            Plugin 'dag/vim2hs'
-            Plugin 'Twinside/vim-haskellConceal'
-            Plugin 'Twinside/vim-haskellFold'
-            Plugin 'lukerandall/haskellmode-vim'
-            Plugin 'eagletmt/neco-ghc'
-            Plugin 'eagletmt/ghcmod-vim'
-            Plugin 'Shougo/vimproc.vim'
-            Plugin 'adinapoli/cumino'
-            Plugin 'bitc/vim-hdevtools'
-        endif
-    " }
-
-    " Ruby {
-        if count(g:m_vim_settings.plugin_groups, 'ruby')
-            Plugin 'tpope/vim-rails'
-            let g:rubycomplete_buffer_loading = 1
-            "let g:rubycomplete_classes_in_global = 1
-            "let g:rubycomplete_rails = 1
-        endif
-    " }
-
-    " Puppet {
-        if count(g:m_vim_settings.plugin_groups, 'puppet')
-            Plugin 'rodjek/vim-puppet'
         endif
     " }
 
@@ -345,14 +287,6 @@
         if count(g:m_vim_settings.plugin_groups, 'go')
             "Plugin 'Blackrush/vim-gocode'
             Plugin 'fatih/vim-go'
-        endif
-    " }
-
-    " Elixir {
-        if count(g:m_vim_settings.plugin_groups, 'elixir')
-            Plugin 'elixir-lang/vim-elixir'
-            Plugin 'carlosgaldino/elixir-snippets'
-            Plugin 'mattreduce/vim-mix'
         endif
     " }
 
@@ -364,7 +298,6 @@
             Plugin 'tpope/vim-cucumber'
             Plugin 'cespare/vim-toml'
             Plugin 'quentindecock/vim-cucumber-align-pipes'
-            Plugin 'Puppet-Syntax-Highlighting'
         endif
     " }
 
