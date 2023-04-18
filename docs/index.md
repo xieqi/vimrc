@@ -3,7 +3,7 @@ layout: default
 title: Home
 nav_order: 1
 permalink: /
-description: This site serves as a collection of documentation about the RAPIDS accelerator for Apache Spark
+description: This site serves as a collection of documentation about the Gluten Plugin for Apache Spark
 ---
 # Overview
 The RAPIDS Accelerator for Apache Spark leverages GPUs to accelerate processing via the
