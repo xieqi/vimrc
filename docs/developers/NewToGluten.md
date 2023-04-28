@@ -52,7 +52,7 @@ And then set the environment setting.
 
 # Compile gluten using debug mode
 
-If you just debug java code, you don't need to compile cpp debug mode, just do as [Velox.md](https://github.com/oap-project/gluten/blob/main/docs/get-started/Velox.md#2-build-gluten-with-velox-backend)
+If you just debug java code, you don't need to compile cpp debug mode, just do as [build-gluten-with-velox-backend](../get-started/Velox.md#2-build-gluten-with-velox-backend)
 
 If you need to debug cpp code, please compile the backend code and gluten cpp code as debug mode.
 
@@ -78,7 +78,7 @@ Install the linux intellij version, and debug code locally.
 [X11 Forwarding: Setup Instructions for Linux and Mac](https://www.businessnewsdaily.com/11035-how-to-use-x11-forwarding.html)
 
 - Download [intellij linux community version](https://www.jetbrains.com/idea/download/?fromIDE=#section=linux) to linux server
-- Start Idea, bash <idea_dir>/idea.sh
+- Start Idea, `bash <idea_dir>/idea.sh`
 
 Notes: Sometimes, your desktop may stop accidently, left idea running.
 

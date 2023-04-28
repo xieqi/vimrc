@@ -214,7 +214,7 @@ bin/beeline -u jdbc:hive2://localhost:10000/ -n root
 
 ##### Query local MergeTree files
 
-- Prepare data
+- Prepare data<span id="data-preparation"></span>
 
 Currently, the feature of writing ClickHouse MergeTree parts by Spark is developing, so you need to use command 'clickhouse-local' to generate MergeTree parts data manually. We provide a python script to call the command 'clickhouse-local' to convert parquet data to MergeTree parts:
 
