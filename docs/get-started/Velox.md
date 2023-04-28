@@ -16,25 +16,25 @@ Gluten builds with Spark3.2.x and Spark3.3.3 now but only fully tested in CI wit
 Velox uses the script `setup-ubuntu.sh` to install all dependency libraries, but Arrow's dependency libraries are not installed. Velox also requires ninja for compilation.
 So we need to install all of them manually. Also, we need to set up the `JAVA_HOME` env. Currently, <b>java 8</b> is required and the support for java 11/17 is not ready.
 
-```shell script
+```bash
 ## run as root
 ## install gcc and libraries to build arrow
 apt-get update && apt-get install -y sudo locales wget tar tzdata git ccache cmake ninja-build build-essential llvm-11-dev clang-11 libiberty-dev libdwarf-dev libre2-dev libz-dev libssl-dev libboost-all-dev libcurl4-openssl-dev openjdk-8-jdk maven
 ```
 <b>For x86_64</b>
-```shell script
+```bash
 ## make sure jdk8 is used
 export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 export PATH=$JAVA_HOME/bin:$PATH
 ```
 <b>For aarch64</b>
-```shell script
+```bash
 ## make sure jdk8 is used
 export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-arm64
 export PATH=$JAVA_HOME/bin:$PATH
 ```
 <b>Get gluten</b>
-```shell script
+```bash
 ## config maven, like proxy in ~/.m2/settings.xml
 
 ## fetch gluten code
@@ -47,7 +47,7 @@ It's recommended to use buildbundle-veloxbe.sh and build gluten in one script.
 [Gluten Usage](./GlutenUsage.md) listed the parameters and their default value of build command for your reference.
 
 <b>For x86_64 build:</b>
-```shell script
+```bash
 cd /path_to_gluten
 
 ## The script builds two jars for spark 3.2.2 and 3.3.1.
@@ -60,7 +60,7 @@ cd /path_to_gluten
 ```
 
 <b>For aarch64 build, set the CPU_TARGET to "aarch64":</b>
-```shell script
+```bash
 export CPU_TARGET="aarch64"
 
 cd /path_to_gluten
@@ -70,7 +70,7 @@ cd /path_to_gluten
 
 <b>Alternatively you may build gluten step by step as below.</b>
 
-```shell script
+```bash
 
 ## fetch arrow and compile
 cd /path_to_gluten/ep/build-arrow/src/
@@ -110,7 +110,7 @@ Once building successfully, the Jar file will be generated in the directory: pac
 
 You can also clone the Velox source from [OAP/velox](https://github.com/oap-project/velox) to some other folder then specify it as below.
 
-```shell script
+```bash
 step 1: recompile velox, set velox_home in build_velox.sh
 cd /path_to_gluten/ep/build_velox/src
 ./build_velox.sh  --velox_home=/your_specified_velox_path
@@ -136,7 +136,7 @@ mvn clean package -Pbackends-velox -Pspark-3.3 -DskipTests
 Arrow home can be set as the same of Velox. We will soon switch to upstream Arrow. Currently the shuffle still uses Arrow's IPC interface.
 You can also clone the Arrow source from [OAP/Arrow](https://github.com/oap-project/arrow) to some other folder then specify it as below.
 
-```shell script
+```bash
 step 1: set ARROW_SOURCE_DIR in build_arrow.sh and compile
 cd /path_to_gluten/ep/build-arrow/src/
 ./build_arrow.sh
@@ -323,13 +323,13 @@ Gluten supports allocating memory on HBM. This feature is optional and is disabl
 
 Gluten will internally build and link to a specific version of Memkind library and [hwloc](https://github.com/open-mpi/hwloc). Other dependencies should be installed on Driver and Worker node first:
 
-```shell script
+```bash
 sudo apt install -y autoconf automake g++ libnuma-dev libtool numactl unzip libdaxctl-dev
 ```
 
 After the set-up, you can now build Gluten with HBM. Below command is used to enable this feature
 
-```shell script
+```bash
 cd /path_to_gluten
 
 ## The script builds two jars for spark 3.2.2 and 3.3.1.
@@ -342,26 +342,51 @@ At runtime, `MEMKIND_HBW_NODES` enviroment variable is detected for configuring 
 
 # 5 Spill (Experimental)
 
-Velox backend supports spill-to-disk by default.
+Velox backend supports spilling-to-disk.
 
 Using the following configuration options to customize spilling:
 
-| Name                                                                    | Default Value | Description                                                                                                                                     |
-|-------------------------------------------------------------------------|---------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
-| spark.gluten.sql.columnar.backend.velox.spillEnabled                    | true          | Whether spill is enabled on Velox backend                                                                                                       |
-| spark.gluten.sql.columnar.backend.velox.memoryCapRatio                  | 0.75          | The overall ratio of total off-heap memory Velox is able to allocate from. If this value is set lower, spill will be triggered more frequently. |
-| spark.gluten.sql.columnar.backend.velox.aggregationSpillEnabled         | true          | Whether spill is enabled on aggregations                                                                                                        |
-| spark.gluten.sql.columnar.backend.velox.joinSpillEnabled                | true          | Whether spill is enabled on joins                                                                                                               |
-| spark.gluten.sql.columnar.backend.velox.orderBySpillEnabled             | true          | Whether spill is enabled on sorts                                                                                                               |
-| spark.gluten.sql.columnar.backend.velox.aggregationSpillMemoryThreshold | 0 (auto)      | Memory limit before spilling to disk for aggregations, per Spark task. Unit: byte                                                               |
-| spark.gluten.sql.columnar.backend.velox.joinSpillMemoryThreshold        | 0             | Memory limit before spilling to disk for joins, per Spark task. Unit: byte                                                                      |
-| spark.gluten.sql.columnar.backend.velox.orderBySpillMemoryThreshold     | 0             | Memory limit before spilling to disk for sorts, per Spark task. Unit: byte                                                                      |
-| spark.gluten.sql.columnar.backend.velox.maxSpillLevel                   | 4             | The max allowed spilling level with zero being the initial spilling level                                                                       |
-| spark.gluten.sql.columnar.backend.velox.maxSpillFileSize                | 0             | The max allowed spill file size. If it is zero, then there is no limit                                                                          |
-| spark.gluten.sql.columnar.backend.velox.minSpillRunSize                 | 268435456     | The min spill run size limit used to select partitions for spilling                                                                             |
-| spark.gluten.sql.columnar.backend.velox.spillStartPartitionBit          | 29            | The start partition bit which is used with 'spillPartitionBits' together to calculate the spilling partition number                             |
-| spark.gluten.sql.columnar.backend.velox.spillPartitionBits              | 2             | The number of bits used to calculate the spilling partition number. The number of spilling partitions will be power of two                      |
-| spark.gluten.sql.columnar.backend.velox.spillableReservationGrowthPct   | 25            | The spillable memory reservation growth percentage of the previous memory reservation size                                                      |
+| Name                                                                    | Default Value                                                                       | Description                                                                                                                                                             |
+|-------------------------------------------------------------------------|-------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| spark.gluten.sql.columnar.backend.velox.spillEnabled                    | true                                                                                | Whether spill is enabled on Velox backend                                                                                                                               |
+| spark.gluten.sql.columnar.backend.velox.memoryCapRatio                  | 0.75                                                                                | The overall ratio of total off-heap memory Velox is able to allocate from. If this value is set lower, spill will be triggered more frequently.                         |
+| spark.gluten.sql.columnar.backend.velox.aggregationSpillEnabled         | true                                                                                | Whether spill is enabled on aggregations                                                                                                                                |
+| spark.gluten.sql.columnar.backend.velox.joinSpillEnabled                | true                                                                                | Whether spill is enabled on joins                                                                                                                                       |
+| spark.gluten.sql.columnar.backend.velox.orderBySpillEnabled             | true                                                                                | Whether spill is enabled on sorts                                                                                                                                       |
+| spark.gluten.sql.columnar.backend.velox.spillMemoryThresholdRatio       | 0.6                                                                                 | Overall size ratio (in percentage) in task memory for spilling data. This will automatically set values for options <operator>SpillMemoryThreshold if they were not set |
+| spark.gluten.sql.columnar.backend.velox.aggregationSpillMemoryThreshold | spark.gluten.sql.columnar.backend.velox.spillMemoryThresholdRatio * task memory cap | Memory limit before spilling to disk for aggregations, per Spark task. Unit: byte                                                                                       |
+| spark.gluten.sql.columnar.backend.velox.joinSpillMemoryThreshold        | spark.gluten.sql.columnar.backend.velox.spillMemoryThresholdRatio * task memory cap | Memory limit before spilling to disk for joins, per Spark task. Unit: byte                                                                                              |
+| spark.gluten.sql.columnar.backend.velox.orderBySpillMemoryThreshold     | spark.gluten.sql.columnar.backend.velox.spillMemoryThresholdRatio * task memory cap | Memory limit before spilling to disk for sorts, per Spark task. Unit: byte                                                                                              |
+| spark.gluten.sql.columnar.backend.velox.maxSpillLevel                   | 4                                                                                   | The max allowed spilling level with zero being the initial spilling level                                                                                               |
+| spark.gluten.sql.columnar.backend.velox.maxSpillFileSize                | 0                                                                                   | The max allowed spill file size. If it is zero, then there is no limit                                                                                                  |
+| spark.gluten.sql.columnar.backend.velox.minSpillRunSize                 | 268435456                                                                           | The min spill run size limit used to select partitions for spilling                                                                                                     |
+| spark.gluten.sql.columnar.backend.velox.spillStartPartitionBit          | 29                                                                                  | The start partition bit which is used with 'spillPartitionBits' together to calculate the spilling partition number                                                     |
+| spark.gluten.sql.columnar.backend.velox.spillPartitionBits              | 2                                                                                   | The number of bits used to calculate the spilling partition number. The number of spilling partitions will be power of two                                              |
+| spark.gluten.sql.columnar.backend.velox.spillableReservationGrowthPct   | 25                                                                                  | The spillable memory reservation growth percentage of the previous memory reservation size                                                                              |
+
+## Guidance to tune against spilling
+
+Gluten enables spilling-to-disk by default. However, manual tweaking may still be required if user wants to get it working at the best situation.
+
+The following tips may help when you are trying to tune against spilling-related configuration options:
+
+* `spark.gluten.sql.columnar.backend.velox.memoryCapRatio`
+
+  This is to set the memory cap limit (represented as MEMORY_LIMIT) to each Velox task. The formula is: MEMORY_LIMIT = (offHeap.size / task per executor) * memoryCapRatio. OOM will be raised if the memory usage exceeds this limit.
+
+* `spark.gluten.sql.columnar.backend.velox.spillMemoryThresholdRatio`
+
+  This is to set the spill limit (represented as SPILL_LIMIT) to each operator in each Velox task. The formula is: SPILL_LIMIT = MEMORY_LIMIT * spillMemoryThresholdRatio. Once a single Velox operator has allocated memory larger than this size, a spill request will be sent to the operator to force spilling-to-disk procedure before it continues processing. 
+
+Please refer to the figure below:
+
+![](../image/veloxbe_memory_layout.png)
+
+You can see that the 25% of off-heap memory (controlled by spark.gluten.sql.columnar.backend.velox.memoryCapRatio) is mainly preserved for storing shuffle data which is not controlled by Velox task.
+
+The 30% of off-heap memory is preserved for the operators in Velox that doesn't yet support spilling so far, for example, the window operator.
+
+It's worth noting that the 45% of off-heap memory is not shared across Velox operators in a single task. This could cause OOM if more than one memory-consuming operators are there in the task. If so, please try decreasing `spark.gluten.sql.columnar.backend.velox.spillMemoryThresholdRatio` to make each operator manage its own share. 
 
 # 6 Intel® QuickAssist Technology (QAT) support
 
@@ -375,24 +400,24 @@ Gluten will internally build and link to a specific version of QATzip library. P
 
 1. Setup ICP_ROOT environment variable. This environment variable is required during building Gluten and running Spark applicaitons. It's recommended to put it in .bashrc on Driver and Worker node.
 
-```shell script
+```bash
 export ICP_ROOT=/path_to_QAT_driver
 ```
 2. **This step is required if your application is running as Non-root user**. The users must be added to the 'qat' group after QAT drvier is installed:
 
-```shell script
+```bash
 sudo usermod -aG qat username # need to relogin
 ```
 Change the amount of max locked memory for the username that is included in the group name. This can be done by specifying the limit in /etc/security/limits.conf. To set 500MB add a line like this in /etc/security/limits.conf:
 
-```shell script
+```bash
 cat /etc/security/limits.conf |grep qat
 @qat - memlock 500000
 ```
 
 3. Enable huge page as root user. **Note that this step is required to execute each time after system reboot.**
 
-```shell script
+```bash
  echo 1024 > /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages
  rmmod usdm_drv
  insmod $ICP_ROOT/build/usdm_drv.ko max_huge_pages=1024 max_huge_pages_per_process=32
@@ -400,7 +425,7 @@ cat /etc/security/limits.conf |grep qat
  
 After the set-up, you can now build Gluten with QAT. Below command is used to enable this feature
 
-```shell script
+```bash
 cd /path_to_gluten
 
 ## The script builds two jars for spark 3.2.2 and 3.3.1.
@@ -411,7 +436,7 @@ cd /path_to_gluten
 
 1. To enable QAT at run-time, first make sure you have the right QAT configuration file at /etc/4xxx_devX.conf. We provide a [example configuration file](qat/4x16.conf). This configuration sets up to 4 processes that can bind to 1 QAT, and each process can use up to 16 QAT DC instances.
 
-```shell script
+```bash
 ## run as root
 ## Overwrite QAT configuration file.
 cd /etc
@@ -422,7 +447,7 @@ adf_ctl restart
 
 2. Check QAT status and make sure the status is up
 
-```shell script
+```bash
 adf_ctl status
 ```
 
@@ -486,7 +511,7 @@ Gluten will internally build and link to a specific version of QPL library, but 
 
 **This step is required if your application is running as Non-root user**. Create a group for the users who have privilege to use IAA, and grant group iaa read/write access to the IAA Work-Queues.
 
-```shell script
+```bash
 sudo groupadd iaa
 sudo usermod -aG iaa username # need to relogin
 sudo chgrp -R iaa /dev/iax
@@ -495,7 +520,7 @@ sudo chmod -R g+rw /dev/iax
  
 After the set-up, you can now build Gluten with QAT. Below command is used to enable this feature
 
-```shell script
+```bash
 cd /path_to_gluten
 
 ## The script builds two jars for spark 3.2.2 and 3.3.1.
@@ -506,7 +531,7 @@ cd /path_to_gluten
 
 1. To enable QAT at run-time, first make sure you have configured the IAA Work-Queues correctly, and the file permissions of /dev/iax/wqX.0 are correct.
 
-```shell script
+```bash
 sudo ls -l /dev/iax
 ```
 
@@ -568,7 +593,7 @@ var gluten_root = "/PATH/TO/GLUTEN"
 
 Below script shows an example about how to run the testing, you should modify the parameters such as executor cores, memory, offHeap size based on your environment. 
 
-```shell script
+```bash
 export GLUTEN_JAR = /PATH/TO/GLUTEN/backends-velox/target/<gluten-jar>
 cat tpch_parquet.scala | spark-shell --name tpch_powertest_velox \
   --master yarn --deploy-mode client \
@@ -593,7 +618,7 @@ Refer to [Gluten parameters ](./Configuration.md) for more details of each param
 ## 8.3 Result
 *wholestagetransformer* indicates that the offload works.
 
-![TPC-H Q6](./image/TPC-H_Q6_DAG.png)
+![TPC-H Q6](../image/TPC-H_Q6_DAG.png)
 
 ## 8.4 Performance
 
