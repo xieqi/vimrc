@@ -119,7 +119,7 @@ The target file is `/path/to/gluten/cpp-ch/build/utils/extern-local-engine/libch
 
 The prerequisites are the same as the one mentioned above. Compile Gluten with ClickHouse backend through maven:
 
-- for Spark 3.2.2
+- for Spark 3.2.2<span id="deploy-spark-322"></span>
 
 ```
     git clone https://github.com/oap-project/gluten.git

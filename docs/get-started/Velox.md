@@ -39,7 +39,6 @@ export PATH=$JAVA_HOME/bin:$PATH
 
 ## fetch gluten code
 git clone https://github.com/oap-project/gluten.git
-
 ```
 # 2 Build Gluten with Velox Backend
 
@@ -56,7 +55,6 @@ cd /path_to_gluten
 ## When you have successfully compiled once and changed some codes then compile again.
 ## you may use following command to skip the arrow, velox and protobuf build
 # ./dev/buildbundle-veloxbe.sh --build_arrow_from_source=OFF --build_velox_from_source=OFF --build_protobuf=OFF
-
 ```
 
 <b>For aarch64 build, set the CPU_TARGET to "aarch64":</b>
@@ -71,7 +69,6 @@ cd /path_to_gluten
 <b>Alternatively you may build gluten step by step as below.</b>
 
 ```bash
-
 ## fetch arrow and compile
 cd /path_to_gluten/ep/build-arrow/src/
 ./get_arrow.sh
@@ -100,7 +97,6 @@ cd /path_to_gluten
 mvn clean package -Pbackends-velox -Pspark-3.2 -DskipTests
 # For spark3.3.x
 mvn clean package -Pbackends-velox -Pspark-3.3 -DskipTests
-
 ```
 notes：The compilation of `Velox` using the script of `build_velox.sh` may fail caused by `oom`, you can prevent this failure by using the user command of `export NUM_THREADS=4` before executing the above scripts.
 
@@ -128,7 +124,6 @@ cd /path_to_gluten
 mvn clean package -Pbackends-velox -Pspark-3.2 -DskipTests
 # For spark3.3.x
 mvn clean package -Pbackends-velox -Pspark-3.3 -DskipTests
-
 ```
 
 ## 2.2 Arrow home directory
@@ -154,7 +149,6 @@ cd /path_to_gluten
 mvn clean package -Pbackends-velox -Pspark-3.2 -DskipTests
 # For spark3.3.x
 mvn clean package -Pbackends-velox -Pspark-3.3 -DskipTests
-
 ```
 
 ## 2.3 HDFS support
@@ -434,7 +428,7 @@ cd /path_to_gluten
 
 ## 6.2 Enable QAT with Gzip Compression for shuffle compression
 
-1. To enable QAT at run-time, first make sure you have the right QAT configuration file at /etc/4xxx_devX.conf. We provide a [example configuration file](qat/4x16.conf). This configuration sets up to 4 processes that can bind to 1 QAT, and each process can use up to 16 QAT DC instances.
+1. To enable QAT at run-time, first make sure you have the right QAT configuration file at /etc/4xxx_devX.conf. We provide a [example configuration file](../qat/4x16.conf). This configuration sets up to 4 processes that can bind to 1 QAT, and each process can use up to 16 QAT DC instances.
 
 ```bash
 ## run as root
@@ -613,7 +607,7 @@ cat tpch_parquet.scala | spark-shell --name tpch_powertest_velox \
   --conf spark.driver.maxResultSize=32g
 ```
 
-Refer to [Gluten parameters ](./Configuration.md) for more details of each parameter used by Gluten.
+Refer to [Gluten parameters ](../Configuration.md) for more details of each parameter used by Gluten.
 
 ## 8.3 Result
 *wholestagetransformer* indicates that the offload works.

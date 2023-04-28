@@ -100,7 +100,7 @@ gdb generic_benchmark
   executable file in fact.
 
 6. `gdb-tui` is a valuable feature and is worth trying. You can get more help from the online docs.
-[gdb-tui](https://sourceware.org/gdb/current/onlinedocs/gdb/TUI.html#TUI)
+[gdb-tui](https://sourceware.org/gdb/onlinedocs/gdb/TUI.html)
 
 7. you can start `generic_benchmark` with specific JSON plan and input files
 - If you omit them, the `example.json, example_lineitem + example_orders` under the directory of `gluten_home/backends-velox/generated-native-benchmark`
